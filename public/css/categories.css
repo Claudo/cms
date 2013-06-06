@@ -1,0 +1,7 @@
+.tree li {
+    list-style-type: none;
+}
+
+#listCategories {
+    padding: 20px 0;
+}
