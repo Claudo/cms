@@ -162,15 +162,23 @@ class Gallery_Controller extends Base_Controller {
     //----------------------------------------------------------------------------------------------------------------------
     // Удаление альбома 
     //----------------------------------------------------------------------------------------------------------------------
-    public function action_delAlbum($idAlbum) {
-        return true;
+    public function action_delAlbum() {
+        $idAlbum = Input::get('idAlbum');
+        if(!empty($idAlbum)){
+            Albums::find($idAlbum)->delete();
+            return true;
+        }else  return false;
     }
 
     //----------------------------------------------------------------------------------------------------------------------
     // Удаление изображения
     //----------------------------------------------------------------------------------------------------------------------
     public function action_delImage($idImage) {
-        return true;
+        $idImage = Input::get('idImage');
+        if(!empty($idImage)){
+            Images::find($idImage)->delete();
+            return true;
+        }else  return false;
     }
 
     //--------------------------------------------------------------------------------------------------
