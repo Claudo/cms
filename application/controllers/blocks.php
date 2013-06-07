@@ -2,10 +2,10 @@
 class Blocks_Controller extends Base_Controller {
     public  function action_index() {
 
-        $blocks = Blocks::getAllBlocks();
+        $blocks = Blocks::getAll();
 
         $view = View::make('blocks.home')
-                        ->with('navActive', 'blocks');
+                        ->with('navActive', 'blocks')
                         ->with('blocks', $blocks);
 
         return $view;

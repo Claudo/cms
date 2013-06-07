@@ -14,7 +14,15 @@
 </div>
 <div style="clear: both;"></div>
 <div>
-    ququ
+    @if($blocks)
+        @foreach($blocks as $num => $block)
+            <div>
+                блок {{$num+1}}<br>
+                URL: {{ $block['url'] }}<br>
+                Блок:<br> {{ $block['block'] }}
+            </div>
+        @endforeach
+    @endif
 </div>
 <div class="modal hide fade" id="addBlock">
     <div class="modal-header">
