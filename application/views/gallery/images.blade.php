@@ -32,7 +32,7 @@
 <!-- шапка. название, элементы управления -->
 <div class="pull-left">
 <h2>Галерея</h2>
-
+{{ $breadcrumbs }}
 </div>
 
 
@@ -48,9 +48,7 @@
 <!-- / -->
 
 <div id="list_images">
-    
-        @render('gallery.list_images', array('images' => $images))
-    
+       @render('gallery.list_images', array('images' => $images, 'pages' => $pages, 'page' => $page))  
 </div>
 
 <!-- Модальное окно добавления новой картинки -->
@@ -136,14 +134,8 @@
 
         if(confirm('Вы действительно хотите удалить изображение?'))
         {
-            $.ajax({  
-                type: "POST",  
-                url: "index.php?class=images&id_album=",  
-                data: "method=delete_image&id_image="+id_image,  
-                success: function(html){
-                    //$("#list_images").empty().html(html);
-                    document.location = 'index.php?class=images&id_album=';
-                }
+            $.post('/gallery/delImage', {idImage: id_image}, function(html){
+                    getImages ();
             });
         }
 
@@ -295,6 +287,16 @@
             $('#cover_block').removeAttr('style').attr('style', 'display: none;')
         })
     });
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Смена страниц
+    //----------------------------------------------------------------------------------------------------------------------
+    function changePage(pageNo) {
+        if(pageNo == '') return false;
+        $.get('/gallery/{{ $idAlbum }}', {page: pageNo}, function (data) {
+            $('#list_images').html(data);
+        })
+    }
 
 </script>
 @endsection

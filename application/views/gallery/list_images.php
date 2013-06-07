@@ -11,5 +11,31 @@ foreach ($images as $image) {
 				'</div>';
 }
 
+$html .= '<div style="clear:both"><center>' ."\n" .
+		 '<div class="pagination">' ."\n" .
+		 '<ul>' ."\n" .
+		 '<li><a onClick="changePage(' . ($page-1) . ');return false;" id="prew">' ."\n" .
+         '<-' ."\n" .
+		 '</a></li>';
+for($i=1; $i<=$pages; $i++){
+    
+    if ($i == $page) {
+    	$html .= '<li class="active">';
+    } else {
+    	$html .= '<li>';
+    }
+    
+    	$html .= '<a onClick="changePage(' . $i . '); return false;" id="page_'. $i .'">'. $i .'</a>';
+		$html .= '</li>';
+}
+
+$html .= '<li><a onClick="changePage('. ($page+1) .'); return false;"  id="next">' . "\n" .
+        	'->' . "\n" .
+			'</a></li>' . "\n" .
+			'</ul>' . "\n" .
+			'</div>' . "\n" .
+			'</center>';
+
+
 echo $html;
 ?>

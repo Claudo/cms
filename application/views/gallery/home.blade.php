@@ -32,14 +32,15 @@
 <!-- шапка. название, элементы управления -->
 <div class="pull-left">
 <h2>Галерея</h2>
+{{ $breadcrumbs }}
 </div>
 
 <div class="pull-right">
+<br>
 <a href="#add_album_modal" role="button" class="btn btn-success" data-toggle="modal">
     <i class="icon icon-white icon-plus"></i>
     Добавить альбом
-</a></div><br><br>
-<div class="pull-right">
+</a>
 <a href="#add_images_modal" role="button" class="btn btn-success" data-toggle="modal">
     <i class="icon icon-white icon-plus"></i>
     Добавить изображение
@@ -205,24 +206,20 @@
         		 description: 	description,
         		 content: 		content},
             	function(data){
-                $("#list_albums").empty().html(data);
+                    clear_form();
+                    $('#add_album_modal').modal('hide');
+                    getAlbums();
+                    return false;
             	}
         );
-
-        clear_form();
-
-        $('#add_album_modal').modal('hide');
-
-        //location.reload();
-
-        return false;
+        
     }
 
     //----------------------------------------------------------------------------------------------------------------------
     // Получить альбомы AJAX'ом
     //----------------------------------------------------------------------------------------------------------------------
     function getAlbums () { 
-        $.get('/gallery/', {}, function (data) {
+        $.get('/gallery/', {val: 'true'}, function (data) {
             $('#listAlbums').html(data);
         });
     }
@@ -233,15 +230,11 @@
     function delete_album (id_album) {
         if(id_album == '' || id_album == null) return false;
 
-        if(confirm('Вы действительно хотите удалить альбом?'))
-        {
-            $.ajax({  
-                type: "POST",  
-                url: "index.php?class=albums",  
-                data: "method=delete_album&id_album="+id_album,  
-                success: function(html){
-                    $("#list_albums").empty().html(html);
-                }
+        if(confirm('Вы действительно хотите удалить альбом?'+"\n"+
+                '(ВНИМАНИЕ !!!Все изображения в данном альбоме будут удалены!!!)'))
+        {                    
+            $.post('/gallery/delAlbum/', {idAlbum: id_album}, function (data){
+                    getAlbums ();
             });
         }
 
@@ -298,11 +291,12 @@
                  albumContent: content}, 
                 function (data) { 
                     
-                    $('#add_album_modal').modal('hide');
-                    clear_form();
-                    getAlbums();
+                    $('#add_album_modal').modal('hide');        
                     //location.reload();
                 });
+
+        clear_form ();
+        getAlbums ();
 
         //clear_form();
 
@@ -323,143 +317,6 @@
 
         return false;
     }
-
-    // ИЗОБРАЖЕНИЯ -------------------------------------------------------------------------------------
-    //--------------------------------------------------------------------------------------------------
-    // Удаление изображения
-    //--------------------------------------------------------------------------------------------------
-    function delete_image (id_image) {
-        if(id_image == '' || id_image == null) return false;
-
-        if(confirm('Вы действительно хотите удалить изображение?'))
-        {
-            $.ajax({  
-                type: "POST",  
-                url: "index.php?class=images&id_album=",  
-                data: "method=delete_image&id_image="+id_image,  
-                success: function(html){
-                    //$("#list_images").empty().html(html);
-                    document.location = 'index.php?class=images&id_album=';
-                }
-            });
-        }
-
-        return false;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // Получение данных для редактирования изображения
-    //--------------------------------------------------------------------------------------------------
-    function edit_image_data (id_image) {
-        if(id_image == '' || id_image == null) return false;
-
-        $.ajax({  
-            type: "POST",  
-            url: "index.php?class=images&id_album=",  
-            data: "method=edit_image_data&id_image="+id_image,  
-            success: function(html){              
-                var response = html.split('|||');
-
-                $('#id_image').val(response[0])
-                $('#inputName').val(response[1]);
-                $('#inputTitle').val(response[2]);
-                $('#inputDescription').val(response[3]);
-                $('#inputHeader').val(response[4]);
-                $('#inputContent').val(response[5]);
-
-                $('#myModalLabel').empty().append('Редактирование изображения');
-                $('#buttonSave').removeAttr('onclick').attr('onclick', 'update_image();');
-                $('#cover_block').removeAttr('style');
-                $('#inputFile').attr('style', 'display:none;');
-            }
-        });
-
-        $('#add_images_modal').modal('show');
-
-        return false;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // Редактирование(обновление) изображения
-    //--------------------------------------------------------------------------------------------------
-    function update_image () { 
-        var id_image    = $('#id_image').val();
-        var id_album    = $('#id_album').val();
-        var image_name  = $('#inputName').val();
-        var title       = $('#inputTitle').val();
-        var description = $('#inputDescription').val();
-        var header      = $('#inputHeader').val();
-        var content     = $('#inputContent').val();
-        var cover       = $('#cover').prop('checked');
-	
-        if(id_image == '' || id_image == null) return false;
-        if(id_album == '' || id_album == null) return false;
-        if(image_name == '' || image_name == null) return false;
-
-        $.ajax({  
-            type: "POST",  
-            url: "index.php?class=images&id_album=",  
-            data: "method=update_image&name="+image_name+"&title="+title+"&description="+description+"&header="+header+"&content="+content+"&id_image="+id_image+"&cover="+cover,  
-            success: function(html){
-                //$("#list_images").empty().html(html);
-                document.location = 'index.php?class=images&id_album=';
-            }
-        });
-
-        $('#add_images_modal').modal('hide');
-
-        $('#id_image').val('');	
-        $('#inputName').val('');
-        $('#inputTitle').val('');
-        $('#inputDescription').val('');
-        $('#inputHeader').val('');
-        $('#inputContent').val('');
-        $('#cover').prop('checked', false);
-
-        $('#myModalLabel').empty().append('Добавить изображение');
-        $('#buttonSave').removeAttr('onclick').attr('onclick', 'add_image();');
-        $('#inputFile').removeAttr('style');
-
-        return false;
-    }
-
-    //--------------------------------------------------------------------------------------------------
-    // Обработка отмены
-    //--------------------------------------------------------------------------------------------------
-    $(document).ready(function () {
-        $('#buttonCancel').click(function () {
-            $('#add_images_modal').modal('hide');
-
-            $('#id_image').val('');	
-            $('#inputName').val('');
-            $('#inputTitle').val('');
-            $('#inputDescription').val('');
-            $('#inputHeader').val('');
-            $('#inputContent').val('');
-
-            $('#myModalLabel').empty().append('Добавить изображение');
-            $('#buttonSave').removeAttr('onclick').attr('onclick', 'upload_image.submit();');
-            $('#inputFile').removeAttr('style');
-            $('#cover_block').removeAttr('style').attr('style', 'display: none;')
-        });
-
-        $('#buttonAdd').click(function () {
-            $('#add_images_modal').modal('hide');
-
-            $('#id_image').val('');	
-            $('#inputName').val('');
-            $('#inputTitle').val('');
-            $('#inputDescription').val('');
-            $('#inputHeader').val('');
-            $('#inputContent').val('');
-
-            $('#myModalLabel').empty().append('Добавить изображение');
-            $('#buttonSave').removeAttr('onclick').attr('onclick', 'upload_image.submit();');
-            $('#inputFile').removeAttr('style');
-            $('#cover_block').removeAttr('style').attr('style', 'display: none;')
-        })
-    });
-
 </script>
 
 @endsection

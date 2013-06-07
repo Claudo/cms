@@ -16,14 +16,19 @@ class Albums extends Eloquent {
 
 		return $albums_arr;
 	}
-/*
+
 	//----------------------------------------------------------------------------------------------------------------------
-	// Получить данные альбопа по Id
+	// Получить данные альбома по Id
 	//----------------------------------------------------------------------------------------------------------------------
 	public static function getAlbumById($idAlbum) {
-
+		$elements = array();
+        $album = Albums::where('id', '=', $idAlbum)->get();
+        foreach ($album as $element) {
+            $elements[] = $element->to_array(); 
+        }
+        return $elements;
 	}
-*/
+
 }
 
 ?>

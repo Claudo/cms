@@ -3,13 +3,16 @@ class Gallery_Controller extends Base_Controller {
     
     public  function action_index() {
     	$albums = Albums::getAlbums();
+        $breadcrumbsArr[] = array ('name' => 'галерея', 'url' => '');
+        $breadcrumbs = Controller::call('breadcrumbs@createBreadcrumbs', array($breadcrumbsArr)); 
         if (Request::ajax()){
             $view = View::make('gallery.list_albums')
                             ->with('albums', $albums);            
         } else {
             $view = View::make('gallery.home')
                             ->with('navActive', 'gallery')
-                            ->with('albums', $albums);
+                            ->with('albums', $albums)
+                            ->with('breadcrumbs', $breadcrumbs);
         }
 
         return $view;
@@ -37,26 +40,31 @@ class Gallery_Controller extends Base_Controller {
     public function action_insertImage() {                         
         $images = new Images;
 
-        //получаем информацию о файле и отправляем его в папку gallery
+        //получаем информацию о файле, даём уникальное имя
+        // и отправляем его в папку gallery
         $file = Input::file('inputFile');
-        Input::upload('inputFile', path('public').'img/gallery', $file['name']);
+        $fileName = time() . rand(0,1000) . '_' . $file['name'];
+        Input::upload('inputFile', path('public').'img/gallery', $fileName);
         //создаём уменьшенную копию изображения для превью
-        $this->create_preview($file['name']);
+        $this->create_preview($fileName);
 
         $images->name = Input::get('inputName');
         $images->title = Input::get('inputTitle');
         $images->description = Input::get('inputDescription');
         $images->header = Input::get('inputHeader');
         $images->content = Input::get('inputContent');
-        $images->image = $file['name'];
-        $images->preview = 'small_'.$file['name'];
+        $images->image = $fileName;
+        $images->preview = 'small_'.$fileName;
         $images->id_album = Input::get('inputAlbumId');
       
         $images->save();
 
     	$albums = Albums::getAlbums();
+        $breadcrumbsArr[] = array ('name' => 'галерея', 'url' => '');
+        $breadcrumbs = Controller::call('breadcrumbs@createBreadcrumbs', array($breadcrumbsArr));
         $view = View::make('gallery.home')
                         ->with('navActive', 'gallery')
+                        ->with('breadcrumbs', $breadcrumbs)
                         ->with('albums', $albums);
 
         return $view;
@@ -76,18 +84,40 @@ class Gallery_Controller extends Base_Controller {
     // Получить изображения ввиде массива
     //----------------------------------------------------------------------------------------------------------------------
     public function action_getImages($idAlbum) {
-        $images = Images::getAllImages($idAlbum);
+        //$images = Images::getAllImages($idAlbum);
         $albums = Albums::getAlbums();
+        $pages=Images::getPagesCount($idAlbum);
+        $albumArr = Albums::getAlbumById($idAlbum);
+        $breadcrumbsArr = array(
+                             array('name' => 'галерея', 'url' => '/gallery/'),
+                             array('name' => $albumArr[0]['name'], 'url' => '')
+                            );
+        $breadcrumbs = Controller::call('breadcrumbs@createBreadcrumbs', array($breadcrumbsArr));
+
 
         if (!Request::ajax()){
+            $offset=Images::getOffset($idAlbum);
+            $images=Images::getArticlesPage($idAlbum, $offset);
             $view = View::make('gallery.images')
                             ->with('navActive', 'gallery')
                             ->with('albums', $albums)
                             ->with('images', $images)
+                            ->with('breadcrumbs', $breadcrumbs)
+                            ->with('pages', $pages)
+                            ->with('page', 1)
                             ->with('idAlbum', $idAlbum);
         } else {
+            $page = Input::get('page');
+            $page=max(intval($page),1);
+            $page=min($page,$pages);
+
+            $offset=Images::getOffset($idAlbum, $page);
+            $images=Images::getArticlesPage($idAlbum, $offset);
             $view=View::make('gallery.list_images')
-                            ->with('images', $images);                
+                            ->with('images', $images)
+                            ->with('pages', $pages) 
+                            ->with('page', $page)
+                            ->with('idAlbum', $idAlbum);              
     	}
         return $view;
     }
@@ -155,6 +185,14 @@ class Gallery_Controller extends Base_Controller {
         $image->content = Input::get('inputContent');
         $image->id_album = Input::get('idAlbum');
 
+        $cover = Input::get('cover');
+        if ($cover) {
+            $album = Albums::find(Input::get('idAlbum'));
+            $cover = Images::getImageById(Input::get('idImage'));
+            $album->cover = $cover[0]['image'];
+            $album->save();
+        }
+
         $image->save();
 
     }
@@ -164,21 +202,44 @@ class Gallery_Controller extends Base_Controller {
     //----------------------------------------------------------------------------------------------------------------------
     public function action_delAlbum() {
         $idAlbum = Input::get('idAlbum');
-        if(!empty($idAlbum)){
-            Albums::find($idAlbum)->delete();
+        if(empty($idAlbum)) return false;
+
+        Albums::find($idAlbum)->delete();
+        $images = Images::where('id_album', '=', $idAlbum)->get();
+        if(!$images) {
+            foreach ($images as $image) {
+                $this->delImageFile($image);
+            }
+        }
             return true;
-        }else  return false;
     }
 
     //----------------------------------------------------------------------------------------------------------------------
     // Удаление изображения
     //----------------------------------------------------------------------------------------------------------------------
-    public function action_delImage($idImage) {
+    public function action_delImage() {
         $idImage = Input::get('idImage');
-        if(!empty($idImage)){
-            Images::find($idImage)->delete();
-            return true;
-        }else  return false;
+        if(empty($idImage)) return false;
+
+        $image = Images::find($idImage);
+        $this->delImageFile($image);
+        return true;         
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Вспомагательная функция для удаления альбома и изображения
+    //----------------------------------------------------------------------------------------------------------------------
+    public function delImageFile($image) {
+        $imageArr = $image->to_array();
+        $imagePath = path('public').'img/gallery/'.$imageArr['image'];
+        $previewPath = path('public').'img/gallery/small/'.$imageArr['preview'];
+
+        unlink($imagePath);
+        unlink($previewPath);
+
+        $image->delete();
+
+        return true;
     }
 
     //--------------------------------------------------------------------------------------------------
