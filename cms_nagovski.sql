@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июн 06 2013 г., 15:02
+-- Время создания: Июн 07 2013 г., 18:38
 -- Версия сервера: 5.5.31
 -- Версия PHP: 5.3.10-1ubuntu3.6
 
@@ -117,6 +117,21 @@ INSERT INTO `articles` (`id`, `title`, `description`, `header`, `content`, `id_c
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `blocks`
+--
+
+CREATE TABLE IF NOT EXISTS `blocks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(128) NOT NULL,
+  `block` text NOT NULL,
+  `updated_at` date NOT NULL,
+  `created_at` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `categories`
 --
 
@@ -182,6 +197,27 @@ INSERT INTO `images` (`id`, `name`, `title`, `description`, `header`, `image`, `
 (10, 'second', '', '', '', 'wp7.jpg', 'small_wp7.jpg', '', 3, '2013-06-05', '2013-06-05'),
 (11, 'eeeee', '', '', '', 'wp3.jpg', 'small_wp3.jpg', '', 3, '2013-06-05', '2013-06-05'),
 (12, 'xcdsfdfd', 'dafdfdafad', 'dasadfsdaf', 'dadfsf', 'wp3.jpg', 'small_wp3.jpg', 'afasfdas', 1, '2013-06-05', '2013-06-05');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `laravel_migrations`
+--
+
+CREATE TABLE IF NOT EXISTS `laravel_migrations` (
+  `bundle` varchar(50) NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`bundle`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Дамп данных таблицы `laravel_migrations`
+--
+
+INSERT INTO `laravel_migrations` (`bundle`, `name`, `batch`) VALUES
+('application', '2013_06_07_093904_create_users', 1),
+('application', '2013_06_07_094001_create_blocks', 1);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
