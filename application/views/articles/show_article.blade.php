@@ -10,7 +10,7 @@
 <!-- Заголовки и элементы управления -->
 <div class="pull-left">
 	<h3>Просмотр статьи</h3>
-    <!-- хлебные кроки -->
+    <!-- хлебные крошки -->
 	@render('articles.breadcrumbs', array('breadcrumbs' => $breadcrumbs))
 </div>
 

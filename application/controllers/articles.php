@@ -107,8 +107,7 @@ class Articles_Controller extends Base_Controller {
         }
         
         $article_arr = $article->to_array();
-//
-//        debug($article_arr); exit;
+
         $categoryArr = Categories::getCategoryById($idCategory);                
         $categoryName = $categoryArr[0]['name_category'];   
         $breadcrumbsArr = array(
@@ -149,17 +148,6 @@ class Articles_Controller extends Base_Controller {
                                  );        
 
         $breadcrumbs = Controller::call('breadcrumbs@createBreadcrumbs', array($breadcrumbsArr));       
-
-//        debug($breadcrumbs); exit;
-//        debug($breadcumps);
-//        var_dump($tmp); 
-//        exit();
-        /* 
-        if ($pages == 0) {
-            $view = View::make('error.404');
-            return $view;
-        }
-        */
 
         if(Request::ajax()) {
             $page = Input::get('page');

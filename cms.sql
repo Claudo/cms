@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июн 06 2013 г., 15:02
+-- Время создания: Июн 07 2013 г., 11:42
 -- Версия сервера: 5.5.31
 -- Версия PHP: 5.3.10-1ubuntu3.6
 
@@ -33,20 +33,20 @@ CREATE TABLE IF NOT EXISTS `albums` (
   `description` text COLLATE utf8_bin,
   `header` tinytext COLLATE utf8_bin,
   `content` text COLLATE utf8_bin,
-  `cover` int(11) NOT NULL,
+  `cover` tinytext COLLATE utf8_bin,
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=17 ;
 
 --
 -- Дамп данных таблицы `albums`
 --
 
 INSERT INTO `albums` (`id`, `name`, `title`, `description`, `header`, `content`, `cover`, `updated_at`, `created_at`) VALUES
-(1, 'Альбом №1', 'dafadsfadfa', 'fdgdfgdfgdgd', 'dfsadas', 'dfdsfasdfadas', 0, '2013-06-04', '2013-06-03'),
-(2, 'Альбом №2', 'Титла', 'Дискрипшн', 'Хедер', 'Описание ', 0, '2013-06-04', '2013-06-03'),
-(3, 'saddasdasdas', 'sdasdasda', 'dadasdsadasdassdasdas', 'sdasdasdasdasd', 'dasdasdasdassadas', 0, '2013-06-04', '2013-06-04');
+(10, 'alBOOM 2', 'sadsdsadaddasdsdadasdasd', 'asdsdassadasasddassaddsaddsasaddsasa', 'sdadasdasdas', 'asdasdasdasdddasdsdsd', '1370531920653_wp4.jpg', '2013-06-07', '2013-06-06'),
+(14, 'альбом 1', 'титл', '', '', '', '1370590494615_wp3.jpg', '2013-06-07', '2013-06-06'),
+(16, 'dssdfsdfsdfdsf', 'dsfsdfs', 'fsdfdsfsdfds', 'dsfsdfsdfsdfdsfs', '', '1370590821619_wp3.jpg', '2013-06-07', '2013-06-06');
 
 -- --------------------------------------------------------
 
@@ -164,24 +164,20 @@ CREATE TABLE IF NOT EXISTS `images` (
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=13 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=26 ;
 
 --
 -- Дамп данных таблицы `images`
 --
 
 INSERT INTO `images` (`id`, `name`, `title`, `description`, `header`, `image`, `preview`, `content`, `id_album`, `updated_at`, `created_at`) VALUES
-(2, 'первоеffsdfsddf', '', '', '', 'wp5.jpg', 'small_wp5.jpg', '', 1, '2013-06-05', '2013-06-04'),
-(3, 'второе17', '2', '4', '3', 'wp7.jpg', 'small_wp7.jpg', '5', 2, '2013-06-05', '2013-06-04'),
-(4, 'третье', '', '', '', 'wp8.jpg', 'small_wp8.jpg', '', 1, '2013-06-05', '2013-06-04'),
-(5, 'xtn', '', '', '', 'Ubuntu_wallpaper.jpg', 'small_Ubuntu_wallpaper.jpg', '', 1, '2013-06-05', '2013-06-04'),
-(6, 'gznm', '', '', '', 'ava.png', 'small_ava.png', '', 1, '2013-06-04', '2013-06-04'),
-(7, 'ggfgfg', '', '', '', 'wp9.jpg', 'small_wp9.jpg', '', 2, '2013-06-05', '2013-06-04'),
-(8, 'last', '', '', '', 'wp2.jpg', 'small_wp2.jpg', '', 1, '2013-06-05', '2013-06-05'),
-(9, 'first', '', '', '', 'wp5.jpg', 'small_wp5.jpg', '', 3, '2013-06-05', '2013-06-05'),
-(10, 'second', '', '', '', 'wp7.jpg', 'small_wp7.jpg', '', 3, '2013-06-05', '2013-06-05'),
-(11, 'eeeee', '', '', '', 'wp3.jpg', 'small_wp3.jpg', '', 3, '2013-06-05', '2013-06-05'),
-(12, 'xcdsfdfd', 'dafdfdafad', 'dasadfsdaf', 'dadfsf', 'wp3.jpg', 'small_wp3.jpg', 'afasfdas', 1, '2013-06-05', '2013-06-05');
+(18, 'eqeqeqwewq', '', '', '', '1370531435519_wp2.jpg', 'small_1370531435519_wp2.jpg', '', 10, '2013-06-06', '2013-06-06'),
+(19, 'gdgdffgd', '', '', '', '1370531910104_wp2.jpg', 'small_1370531910104_wp2.jpg', '', 10, '2013-06-06', '2013-06-06'),
+(20, 'fdgdgdfgdd', '', '', '', '1370531920653_wp4.jpg', 'small_1370531920653_wp4.jpg', '', 10, '2013-06-06', '2013-06-06'),
+(21, 'adsdasasda', 'adsasdadasda', 'asdasdasdasda', 'adsdasdadasdsadasdd', '1370532305482_bg.jpg', 'small_1370532305482_bg.jpg', 'dasdadasdasdasdad', 10, '2013-06-06', '2013-06-06'),
+(22, 'dffssdsfsdfsdfsdfdsd', 'dsfsdfsdfsdfdsdfs', 'fdsfsdfsdfs', 'sdfsdfsdfsdfsdfsdfdsf', '1370532324491_wp2.jpg', 'small_1370532324491_wp2.jpg', 'sdfsdfdfdsfsdfsdfsdfsfsdfss', 10, '2013-06-06', '2013-06-06'),
+(24, 'sadasdadasdasdasdas', '', '', '', '1370590494615_wp3.jpg', 'small_1370590494615_wp3.jpg', '', 14, '2013-06-07', '2013-06-07'),
+(25, 'ffdsdfsdfsfsfsdf', 'fsd', 'ddsfsdfdsfsfdsds', 'fsdfsdsfsd', '1370590821619_wp3.jpg', 'small_1370590821619_wp3.jpg', '', 16, '2013-06-07', '2013-06-07');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
