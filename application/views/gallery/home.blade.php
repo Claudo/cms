@@ -1,7 +1,7 @@
 @layout('index')
 <!-- Временно (убрать в общий css) -->
 <style type="text/css">
-.album_cover {
+.albumCover {
 	position: relative;
     border-radius: 15px;
 	border: 1px solid #DDDDDD;
@@ -14,7 +14,7 @@
 	padding: 5px 5px 0 5px;
 }
 
-.image_block {
+.imageBlock {
         position: relative;
         border: 1px solid #DDDDDD;
         height: 170px; 
@@ -37,11 +37,11 @@
 
 <div class="pull-right">
 <br>
-<a href="#add_album_modal" role="button" class="btn btn-success" data-toggle="modal">
+<a href="#addAlbumModal" role="button" class="btn btn-success" data-toggle="modal">
     <i class="icon icon-white icon-plus"></i>
     Добавить альбом
 </a>
-<a href="#add_images_modal" role="button" class="btn btn-success" data-toggle="modal">
+<a href="#addImagesModal" role="button" class="btn btn-success" data-toggle="modal">
     <i class="icon icon-white icon-plus"></i>
     Добавить изображение
 </a>
@@ -63,7 +63,7 @@
 <!-- // -->
 
 <!-- Модальное окно, добавления нового альбома -->
-<div id="add_album_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="addAlbumModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">Добавить альбом</h3>
@@ -100,24 +100,24 @@
                     <textarea id="inputContent" rows="4" class="span12" placeholder="Описание альбома(видно пользователю)"></textarea>
                 </div>
             </div>
-            <input type="hidden" id="id_album" value="">            
+            <input type="hidden" id="idAlbum" value="">            
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true" id="buttonCancel">Отмена</button>
-        <button class="btn btn-primary" id="buttonSave" onClick="add_album();">Сохранить</button>
+        <button class="btn btn-primary" id="buttonSave" onClick="addAlbum();">Сохранить</button>
     </div>
 </div>
 <!-- // -->
 
 <!-- Модальное окно добавления новой картинки -->
-<div id="add_images_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="addImagesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">Добавить изображение</h3>
     </div>
     <div class="modal-body">
-        <form class="form-horizontal" method="POST" action="/gallery/" id="upload_image" name="upload_image" enctype="multipart/form-data">
+        <form class="form-horizontal" method="POST" action="/gallery/" id="uploadImage" name="uploadImage" enctype="multipart/form-data">
             <div class="control-group">
                 <label class="control-label" for="inputName">Альбом: </label>
                 <div class="controls">
@@ -163,20 +163,20 @@
                     <textarea id="inputContent" name="inputContent" rows="4" class="span12" placeholder="Описание изображения(видно пользователю)"></textarea>
                 </div>
             </div>
-            <div class="control-group" style="display: none;" id="cover_block">
+            <div class="control-group" style="display: none;" id="coverBlock">
                 <div class="controls">
                     <label class="checkbox">
                         <input type="checkbox" id="cover"> Обложка альбома
                     </label>
                 </div>
             </div>
-            <input type="hidden" id="id_album" name="id_album" value="">            
-            <input type="hidden" id="id_image" name="id_image" value="">            
+            <input type="hidden" id="idAlbum" name="idAlbum" value="">            
+            <input type="hidden" id="idImage" name="idImage" value="">            
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true" id="buttonCancel">Отмена</button>
-        <button class="btn btn-primary" id="buttonSave" onclick="upload_image.submit();">Сохранить</button>
+        <button class="btn btn-primary" id="buttonSave" onclick="uploadImage.submit();">Сохранить</button>
     </div>
 </div>
 <!-- // -->
@@ -187,27 +187,27 @@
     //--------------------------------------------------------------------------------------------------
     // Добавление нового альбома
     //--------------------------------------------------------------------------------------------------
-    function add_album() {
-        var album_name  = $('#inputName').val();
+    function addAlbum() {
+        var albumName  = $('#inputName').val();
         var title       = $('#inputTitle').val();
         var description = $('#inputDescription').val();
         var header      = $('#inputHeader').val();
         var content     = $('#inputContent').val();
 
-        if(album_name == '' || album_name == null){ 
+        if(albumName == '' || albumName == null){ 
         	alert('Незаполнено имя альбома');
         	return false;
         }
 
         $.post('/gallery/insertAlbum', 
-        		{albumName: 	album_name, 
+        		{albumName: 	albumName, 
         		 title: 		title, 
         		 header: 		header, 
         		 description: 	description,
         		 content: 		content},
             	function(data){
-                    clear_form();
-                    $('#add_album_modal').modal('hide');
+                    clearForm();
+                    $('#addAlbumModal').modal('hide');
                     getAlbums();
                     return false;
             	}
@@ -227,13 +227,13 @@
     //--------------------------------------------------------------------------------------------------
     // Удаление альбома
     //--------------------------------------------------------------------------------------------------
-    function delete_album (id_album) {
-        if(id_album == '' || id_album == null) return false;
+    function deleteAlbum (idAlbum) {
+        if(idAlbum == '' || idAlbum == null) return false;
 
         if(confirm('Вы действительно хотите удалить альбом?'+"\n"+
                 '(ВНИМАНИЕ !!!Все изображения в данном альбоме будут удалены!!!)'))
         {                    
-            $.post('/gallery/delAlbum/', {idAlbum: id_album}, function (data){
+            $.post('/gallery/delAlbum/', {idAlbum: idAlbum}, function (data){
                     getAlbums ();
             });
         }
@@ -244,10 +244,10 @@
     //--------------------------------------------------------------------------------------------------
     // Получение данных для редактирования альбома
     //--------------------------------------------------------------------------------------------------
-    function edit_album_data (id_album) {
-        if(id_album == '' || id_album == null) return false;
+    function editAlbumData (idAlbum) {
+        if(idAlbum == '' || idAlbum == null) return false;
         
-        $.post('/gallery/getAlbumsJson', {idAlbum: id_album}, function (data) {
+        $.post('/gallery/getAlbumsJson', {idAlbum: idAlbum}, function (data) {
             data = $.parseJSON(data);
             console.debug(data);
 
@@ -256,12 +256,12 @@
             $('#inputTitle').val(data.title);
             $('#inputDescription').val(data.description);
             $('#inputContent').val(data.content);
-            $('#id_album').val(data.id);
-            $('#buttonSave').removeAttr('onClick').attr('onClick', 'updateAlbum(' + id_album +  ')');
+            $('#idAlbum').val(data.id);
+            $('#buttonSave').removeAttr('onClick').attr('onClick', 'updateAlbum(' + idAlbum +  ')');
 
             $('#myModalLabel').empty().append('Редактирование альбома');
            
-            $('#add_album_modal').modal('show');
+            $('#addAlbumModal').modal('show');
         });
                 
 
@@ -272,35 +272,31 @@
     // Редактирование(обновление) альбома
     //--------------------------------------------------------------------------------------------------
     function updateAlbum () {
-        var id_album    = $('#id_album').val();
-        var album_name  = $('#inputName').val();
+        var idAlbum    = $('#idAlbum').val();
+        var albumName  = $('#inputName').val();
         var title       = $('#inputTitle').val();
         var description = $('#inputDescription').val();
         var header      = $('#inputHeader').val();
         var content     = $('#inputContent').val();
 
-        if(id_album == '' || id_album == null) return false;       //сделать нормальную
-        if(album_name == '' || album_name == null) return false;   //ошибку
+        if(idAlbum == '' || idAlbum == null) return false;       //сделать нормальную
+        if(albumName == '' || albumName == null) return false;   //ошибку
 
         $.post('/gallery/updateAlbum', 
-                {idAlbum: id_album,
-                 albumName: album_name,
+                {idAlbum: idAlbum,
+                 albumName: albumName,
                  albumTitle: title,
                  albumDescription: description,
                  albumHeader: header,
                  albumContent: content}, 
                 function (data) { 
                     
-                    $('#add_album_modal').modal('hide');        
+                    $('#addAlbumModal').modal('hide');        
                     //location.reload();
                 });
 
-        clear_form ();
+        clearForm ();
         getAlbums ();
-
-        //clear_form();
-
-        //$('#add_album_modal').modal('hide');
 
         return false;
     }
@@ -308,7 +304,7 @@
     //----------------------------------------------------------------------------------------------------------------------
     // Очистка формы
     //----------------------------------------------------------------------------------------------------------------------
-    function clear_form() {
+    function clearForm() {
     	$('#inputName').val('');
         $('#inputTitle').val('');
         $('#inputDescription').val('');
