@@ -1,11 +1,7 @@
 @layout('index')
 
 @section('content')
-<h2>Статичные HTML блоки</h2>
 
-
-<<<<<<< HEAD
-=======
 <div class="pull-left">
     <h2>Статичные HTML блоки</h2>
 </div>
@@ -72,5 +68,5 @@
         });
     }
 </script>
->>>>>>> 4b211cc633c6b68c3d12ca30f1ab7744c23cf6f0
+
 @endsection
