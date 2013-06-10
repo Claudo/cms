@@ -72,7 +72,7 @@ return array(
 			'host'     => '127.0.0.1',
 			'database' => 'cms',
 			'username' => 'root',
-			'password' => '',
+			'password' => 'toor',
 			'charset'  => 'utf8',
 			'prefix'   => '',
 		),
