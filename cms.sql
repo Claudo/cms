@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.10.1deb1
+-- version 3.5.8.1deb1
 -- http://www.phpmyadmin.net
 --
--- Хост: localhost
--- Время создания: Июн 07 2013 г., 11:42
--- Версия сервера: 5.5.31
--- Версия PHP: 5.3.10-1ubuntu3.6
+-- Host: localhost
+-- Generation Time: Jun 10, 2013 at 03:56 PM
+-- Server version: 5.5.31-0ubuntu0.13.04.1
+-- PHP Version: 5.4.9-4ubuntu2
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- База данных: `cms`
+-- Database: `cms`
 --
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `albums`
+-- Table structure for table `albums`
 --
 
 CREATE TABLE IF NOT EXISTS `albums` (
@@ -40,18 +40,18 @@ CREATE TABLE IF NOT EXISTS `albums` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=17 ;
 
 --
--- Дамп данных таблицы `albums`
+-- Dumping data for table `albums`
 --
 
 INSERT INTO `albums` (`id`, `name`, `title`, `description`, `header`, `content`, `cover`, `updated_at`, `created_at`) VALUES
-(10, 'alBOOM 2', 'sadsdsadaddasdsdadasdasd', 'asdsdassadasasddassaddsaddsasaddsasa', 'sdadasdasdas', 'asdasdasdasdddasdsdsd', '1370531920653_wp4.jpg', '2013-06-07', '2013-06-06'),
+(10, 'alBOOM 2', 'sadsdsadaddasdsdadasdasd', 'asdsdassadasasddassaddsaddsasaddsasa', 'sdadasdasdas', 'asdasdasdasdddasdsdsd', '1370531910104_wp2.jpg', '2013-06-10', '2013-06-06'),
 (14, 'альбом 1', 'титл', '', '', '', '1370590494615_wp3.jpg', '2013-06-07', '2013-06-06'),
 (16, 'dssdfsdfsdfdsf', 'dsfsdfs', 'fsdfdsfsdfds', 'dsfsdfsdfsdfdsfs', '', '1370590821619_wp3.jpg', '2013-06-07', '2013-06-06');
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `articles`
+-- Table structure for table `articles`
 --
 
 CREATE TABLE IF NOT EXISTS `articles` (
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `articles` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=53 ;
 
 --
--- Дамп данных таблицы `articles`
+-- Dumping data for table `articles`
 --
 
 INSERT INTO `articles` (`id`, `title`, `description`, `header`, `content`, `id_category`, `updated_at`, `created_at`) VALUES
@@ -117,7 +117,30 @@ INSERT INTO `articles` (`id`, `title`, `description`, `header`, `content`, `id_c
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `categories`
+-- Table structure for table `blocks`
+--
+
+CREATE TABLE IF NOT EXISTS `blocks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(128) NOT NULL,
+  `block` text NOT NULL,
+  `updated_at` date NOT NULL,
+  `created_at` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `blocks`
+--
+
+INSERT INTO `blocks` (`id`, `url`, `block`, `updated_at`, `created_at`) VALUES
+(3, 'gogo.loco', '<p>first</p>\n', '2013-06-07', '2013-06-07'),
+(4, 'gogo2.com', '<p>second</p>\n', '2013-06-07', '2013-06-07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
 --
 
 CREATE TABLE IF NOT EXISTS `categories` (
@@ -130,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=37 ;
 
 --
--- Дамп данных таблицы `categories`
+-- Dumping data for table `categories`
 --
 
 INSERT INTO `categories` (`id`, `parent_id`, `name_category`, `updated_at`, `created_at`) VALUES
@@ -148,7 +171,7 @@ INSERT INTO `categories` (`id`, `parent_id`, `name_category`, `updated_at`, `cre
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `images`
+-- Table structure for table `images`
 --
 
 CREATE TABLE IF NOT EXISTS `images` (
@@ -167,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `images` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=26 ;
 
 --
--- Дамп данных таблицы `images`
+-- Dumping data for table `images`
 --
 
 INSERT INTO `images` (`id`, `name`, `title`, `description`, `header`, `image`, `preview`, `content`, `id_album`, `updated_at`, `created_at`) VALUES
