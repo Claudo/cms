@@ -3,21 +3,20 @@ class Blocks_Controller extends Base_Controller {
 
     public  function action_index() {
 
+        $page = Input::get('page') ? Input::get('page') : 1;
+        $blocks = Blocks::getBlocksByPageNum($page);
+        $template = Request::ajax() ? 'blocks.blocklist' : 'blocks.home';
+
         $pageCount = Blocks::getPagesCount();
 
-        if(Request::ajax()){
 
-        } else {
+        $view = View::make($template)
+                        ->with('navActive', 'blocks')
+                        ->with('pages', $pageCount ? $pageCount : 0)
+                        ->with('page', $page)
+                        ->with('blocks', $blocks);
 
-            $blocks = Blocks::getAll();
-            $view = View::make('blocks.home')
-                            ->with('navActive', 'blocks')
-                            ->with('pages', $pageCount)
-                            ->with('page', 1)
-                            ->with('blocks', $blocks);
-
-            return $view;
-        }
+        return $view;
     }
 
     public function action_saveBlock() {
@@ -34,7 +33,10 @@ class Blocks_Controller extends Base_Controller {
         $block->block = Input::get('block');
         $block->save();
 
-        return json_encode(array('id' => $block->id));
+        return json_encode(array(
+                            'id'    => $block->id,
+                            'block' => htmlspecialchars(mb_substr($block->block, 0, 300))
+        ));
     }
 
     public function action_removeBlock() {

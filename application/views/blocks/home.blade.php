@@ -1,7 +1,7 @@
 @layout('index')
 
 @section('content')
-
+<link href="/css/blocks.css" rel="stylesheet" media="screen">
 <!-- Подключаем CKEditor -->
 <script src="/ckeditor/ckeditor.js"></script>
 
@@ -9,114 +9,123 @@
     <h2>Статичные HTML блоки</h2>
 </div>
 <div class="pull-right">
-    <a href="#addBlock" role="button" onClick="resetForm()" class="btn btn-success" data-toggle="modal">
+    <a href="#add-block" role="button" onClick="htmlBlocks.resetForm()" class="btn btn-success" data-toggle="modal">
         <i class="icon icon-white icon-plus"></i> Добавить блок
     </a>
 </div>
-<div style="clear: both;"></div>
-<div id='contentBlock'>
-@if($blocks)
+<div style="clear: both; height: 30px"> </div>
+<div id='content'>
     @render('blocks.blocklist', array('blocks' => $blocks, 'pages' => $pages, 'page' => $page))
-@endif
 </div>
-<div class="modal hide fade" id="addBlock">
+<div class="modal hide fade" id="add-block">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Блок</h3>
     </div>
     <div class="modal-body">
-        <form class="form-horizontal" onSubmit="insertBlock(); return false;" id="addBlockForm">
+        <form class="form-horizontal" onSubmit="htmlBlocks.saveBlock(); return false;" id="add-block-form">
             <div class="control-group">
                 <label class="control-label" for="inputURL">URL:</label>
                 <div class="controls">
-                    <input type="text" id="inputURL" name="inputURL" placeholder="http://" class="span12">
+                    <input type="text" id="input-url" name="input-url" placeholder="http://" class="span12">
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="inputBlock">Блок:</label>
+                <label class="control-label" for="inputblock">Блок:</label>
                 <div class="controls">
-                    <textarea name="inputBlock" id="inputBlock" placeholder="Блок"></textarea>
+                    <textarea name="inputblock" id="inputblock" placeholder="Блок"></textarea>
                 </div>
             </div>
-            <input type="hidden" id="blockId" name="blockId" value=''>
+            <input type="hidden" id="block-id" name="block-id" value=''>
         </form>
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Отмена</a>
-        <a href="#" class="btn btn-primary" onClick="saveBlock(); return false;">Сохранить</a>
+        <a href="#" class="btn btn-primary" onClick="htmlBlocks.saveBlock(); return false;">Сохранить</a>
     </div>
 </div>
 
 <script>
+    var pages = {{$pages}};
+    var page = {{$page}};
 
-    CKEDITOR.replace( 'inputBlock' );
+    var htmlBlocks = {
 
-    function saveBlock() {
-        var inputURL = $('#inputURL').val();
-        var inputBlock = CKEDITOR.instances.inputBlock.getData();
+        init: function(){
+            CKEDITOR.replace( 'inputblock' );
+        },
 
-        if(inputURL == '' || inputBlock == '') {
-            alert('Заполнены не все поля!');
-            return false;
-        }
-        var blockId = $('#blockId').val();
+        saveBlock: function() {
+            var inputURL = $('#input-url').val();
+            var inputBlock = CKEDITOR.instances.inputblock.getData();
 
-        $.post('/blocks/saveBlock', { id: blockId, url: inputURL, block: inputBlock }, function (data) {
-            data = $.parseJSON(data);
-            alert('Сохранение прошло успешно');
-            bUrl = $('#inputURL').val();
-            block = CKEDITOR.instances.inputBlock.getData();
-
-
-
-            if ($('div').is('#block'+data.id)) {
-                $('#block'+data.id+' .bUrl').html(bUrl);
-                $('#block'+data.id+' .bBlock').html(block);
-            } else {
-                newBlock = $("<div>");
-                newBlock.attr('id', 'block' + data.id);
-                newBlock.append('<div>id: <span class="bId"></span>'+data.id+'</div>');
-                newBlock.append('<div>URL: <span class="bUrl">'+bUrl+'</span></div>');
-                newBlock.append('<div>Блок: <span class="bBlock">'+block+'</span></div>');
-                newBlock.append('<div><a href="#" class="btn btn-danger" onClick="removeBlock('+data.id+'); return false;">Удалить</a> <a href="#" class="btn btn-success" onClick="editBlock('+data.id+'); return false;">Редактировать</a></div>');
-                $('#blockList').append(newBlock);
+            if(inputURL == '' || inputBlock == '') {
+                alert('Заполнены не все поля!');
+                return false;
             }
-            resetForm();
-            $('#addBlock').modal('hide');
 
-        });
+            var blockId = $('#block-id').val();
+            $.post('/blocks/saveBlock', { id: blockId, url: inputURL, block: inputBlock }, function (data) {
+                data = $.parseJSON(data);
+                alert('Сохранение прошло успешно');
+                bUrl = $('#input-url').val();
+                block = data.block;
+
+
+
+                if ($('tr').is('#block'+data.id)) {
+                    $('#block'+data.id+' .b-url').html(bUrl);
+                    $('#block'+data.id+' .b-block').html(block);
+                } else {
+                    if ((page == pages) || !pages) {
+                        newBlock = $("<tr>");
+                        newBlock.attr('id', 'block' + data.id);
+                        newBlock.append('<td class="b-id">'+data.id+'</td>');
+                        newBlock.append('<td class="b-url">'+bUrl+'</span></td>');
+                        newBlock.append('<td class="b-block">'+block+'</span></td>');
+                        newBlock.append('<td class="activity-block"><a href="#" class="btn btn-warning" onClick="htmlBlocks.editBlock(' + data.id + '); return false;"><i class="icon icon-white icon-pencil"></i></a>\
+                            <a href="#" class="btn btn-danger" onClick="htmlBlocks.removeBlock(' + data.id + '); return false;"><i class="icon icon-white icon-trash"></i></a></td>');
+                        $('#block-list').append(newBlock);
+                    }
+                }
+                $('#add-block').modal('hide');
+
+            });
+        },
+
+        removeBlock: function(blockId) {
+            $.post('/blocks/removeBlock', { id: blockId }, function (data) {
+                alert('Блок #'+blockId+' удален');
+                $('#block'+blockId).remove();
+            });
+        },
+
+        editBlock: function(blockId) {
+            this.resetForm();
+            $.post('/blocks/getBlockById', { id: blockId }, function (data) {
+                data = $.parseJSON(data);
+                $('#block-id').val(data.id);
+                $('#input-url').val(data.url);
+                CKEDITOR.instances.inputblock.setData(data.block);
+                $('#add-block').modal('show');
+            });
+        },
+
+        resetForm: function() {
+            $(':input','#add-block-form').not(':button, :submit, :reset').val('');
+            CKEDITOR.instances.inputblock.setData('');
+        },
+
+        changePage: function(pageNum) {
+            if(pageNum == '') return false;
+
+            $.get('/blocks/', {page: pageNum}, function (data) {
+                page = pageNum;
+                $('#content').html(data);
+            })
+        }
     }
-
-    function removeBlock(blockId) {
-        $.post('/blocks/removeBlock', { id: blockId }, function (data) {
-            alert('Блок #'+blockId+' удален');
-            $('#block'+blockId).remove();
-        });
-    }
-
-    function editBlock(blockId) {
-        resetForm();
-        $.post('/blocks/getBlockById', { id: blockId }, function (data) {
-            data = $.parseJSON(data);
-            $('#blockId').val(data.id);
-            $('#inputURL').val(data.url);
-            CKEDITOR.instances.inputBlock.setData(data.block);
-            $('#addBlock').modal('show');
-        });
-    }
-
-    function resetForm() {
-        $(':input','#addBlockForm').not(':button, :submit, :reset').val('');
-        CKEDITOR.instances.inputBlock.setData('');
-    }
-
-    function changePage(pageNum) {
-        if(pageNum == '') return false;
-        $.get('/blocks/', {page: pageNum}, function (data) {
-            $('#contentBlock').html(data);
-        })
-    }
-
+    htmlBlocks.init();
 </script>
 
 @endsection

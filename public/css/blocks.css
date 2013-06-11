@@ -1,0 +1,7 @@
+.b-block {
+    width: 400px;
+    text-overflow: ellipsis;
+}
+.activity-block {
+    text-align: right!important;
+}
