@@ -104,6 +104,7 @@ class Articles_Controller extends Base_Controller {
         if (!empty($idArticle)) {
             $article = Articles::find($idArticle);
             $article->tags()->delete();
+            $article->comments()->delete();
             $article->delete();
             return true;
         } else {
