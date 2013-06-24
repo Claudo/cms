@@ -49,7 +49,7 @@ class Gallery_Controller extends Base_Controller {
         $fileName = time() . rand(0,1000) . '_' . $file['name'];
         Input::upload('inputFile', path('public').'img/gallery', $fileName);
         //создаём уменьшенную копию изображения для превью
-        $this->createPreview($fileName);
+        $images::createPreview($fileName);
 
         //записываем полученные данные в базу
         $images->name = Input::get('inputName');
@@ -244,53 +244,4 @@ class Gallery_Controller extends Base_Controller {
     //--------------------------------------------------------------------------------------------------
     // Создание превью 100*100
     //--------------------------------------------------------------------------------------------------
-    private function createPreview($filename, $w=100, $h=100) { 
-        $smallimage = $filename;       
-        $filename = path('public').'img/gallery/' . $filename;        
-        $smallimage = path('public').'img/gallery/small/small_' . $smallimage; 
-        
-        $ratio = $w / $h;        
-        $sizeImg = getimagesize($filename);        
-        if (($sizeImg[0] < $w) && ($sizeImg[1] < $h))
-            return true;
-        $srcRatio = $sizeImg[0] / $sizeImg[1];
-
-        // Здесь вычисляем размеры уменьшенной копии, чтобы при масштабировании сохранились  
-        // пропорции исходного изображения 
-        if ($ratio < $srcRatio) {
-            $h = $w / $srcRatio;
-        } else {
-            $w = $h * $srcRatio;
-        }
-        // создадим пустое изображение по заданным размерам  
-        $destImg = imagecreatetruecolor($w, $h);
-        $white = imagecolorallocate($destImg, 255, 255, 255);
-        if ($sizeImg[2] == 2)
-            $srcImg = imagecreatefromjpeg($filename);
-        else if ($sizeImg[2] == 1)
-            $srcImg = imagecreatefromgif($filename);
-        else if ($sizeImg[2] == 3)
-            $srcImg = imagecreatefrompng($filename);
-
-        // масштабируем изображение     функцией imagecopyresampled() 
-        // $destImg - уменьшенная копия 
-        // $srcImg - исходной изображение 
-        // $w - ширина уменьшенной копии 
-        // $h - высота уменьшенной копии         
-        // $sizeImg[0] - ширина исходного изображения 
-        // $sizeImg[1] - высота исходного изображения 
-        imagecopyresampled($destImg, $srcImg, 0, 0, 0, 0, $w, $h, $sizeImg[0], $sizeImg[1]);
-        // сохраняем уменьшенную копию в файл  
-        if ($sizeImg[2] == 2)
-            imagejpeg($destImg, $smallimage);
-        else if ($sizeImg[2] == 1)
-            imagegif($destImg, $smallimage);
-        else if ($sizeImg[2] == 3)
-            imagepng($destImg, $smallimage);
-        // чистим память от созданных изображений 
-        imagedestroy($destImg);
-        imagedestroy($srcImg);
-        return basename($smallimage);
-    }
-
 }

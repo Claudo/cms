@@ -2,6 +2,7 @@
 <table class="table table-bordered" width="100%">
     <tr>
         <th>id</th>
+        <th>Превью</th>
         <th>Заголовок</th>
         <th>Описание</th>
         <th>Действия</th>
@@ -9,6 +10,7 @@
     @foreach($articles as $article)
         <tr>
             <td class="span1">{{ $article['id'] }}</td>
+            <td width=100><img src="/imgpreview/{{ $article['id'] }}" border=0 alt=''></td>
             <td>
             <a href="{{ $article['id_category'] }}/{{ $article['id'] }}">
                 {{ $article['header'] }}</a>

@@ -43,12 +43,12 @@
         <h3 id="myModalLabel">Добавить статью</h3>
     </div>
     <div class="modal-body">
-        <form class="form-horizontal" onSubmit="insertArticle(); return false;" id="addCategoryForm">
+        <form class="form-horizontal" action='' id="addArticleForm" name='addArticleForm' method="POST" enctype="multipart/form-data">
             <!-- Категория -->
             <div class="control-group">
                 <label class="control-label" for="inputCategory">Категория:</label>
                 <div class="controls">
-                    <select id="inputCategory" class="span12">
+                    <select id="inputCategory" name="idCategory" class="span12">
                         <option value="0">Выберите категорию</option>
                             @render('articles.tree_select', array('tree' => $tree))
                     </select>
@@ -59,15 +59,26 @@
             <div class="control-group">
                 <label class="control-label" for="inputHeader">Заголовок:</label>
                 <div class="controls">
-                        <input type="text" id="inputHeader" name="inputHeader" placeholder="Заголовок статьи (<h1>)" class="span12">
+                        <input type="text" id="inputHeader" name="header" placeholder="Заголовок статьи (<h1>)" class="span12">
                 </div>
             </div>
+
+            <!-- Теги -->
+            <div class="control-group">
+                <label class="control-label" for="inputHeader">Теги:</label>
+                <div class="controls">
+                    <div id='oldTags'></div>
+                    <div id='tags'></div>
+                    <button class="btn" onClick='addTagInput(); return false;'>Добавить тег</button>
+                </div>
+            </div>
+
 
             <!-- Title -->
             <div class="control-group">
                 <label class="control-label" for="inputTitle">Title:</label>
                 <div class="controls">
-                    <input type="text" id="inputTitle" name="inputTitle" placeholder="Title статьи (<title>)" class="span12">
+                    <input type="text" id="inputTitle" name="title" placeholder="Title статьи (<title>)" class="span12">
                 </div>
             </div>
 
@@ -75,7 +86,15 @@
             <div class="control-group">
                 <label class="control-label" for="inputDescription">Описание:</label>
                 <div class="controls">
-                    <input type="text" id="inputDescription" name="inputDescription" placeholder="Описание (<description>)" class="span12">
+                    <input type="text" id="inputDescription" name="description" placeholder="Описание (<description>)" class="span12">
+                </div>
+            </div>
+
+            <!-- Фото превью -->
+            <div class="control-group">
+                <label class="control-label" for="inputDescription">Превью:</label>
+                <div class="controls">
+                    <input type="file" id="inputImgPreview" name="imgPreview" class="span12">
                 </div>
             </div>
 
@@ -83,7 +102,7 @@
             <div class="control-group">
                 <label class="control-label" for="inputContent">Контент:</label>
                 <div class="controls">
-                    <textarea name="inputContent" id="inputContent" placeholder="Контент"></textarea>
+                    <textarea name="content" id="inputContent" placeholder="Контент"></textarea>
                 </div>
             </div>
         </form>
@@ -101,6 +120,23 @@
     // Подключаем CKEeditor
     //--------------------------------------------------------------------------------------------------
     CKEDITOR.replace( 'inputContent' );
+
+
+    var tags = 0;
+    function addTagInput() {
+
+        if(!tags){
+            $num = 1;
+            tags++;
+        } else {
+            $num = tags + 1;
+            tags++;
+        }
+
+        $('#tags').append('<input type="text" class="tags" name="tag['+$num+']" class="span12">');
+        return false;
+    }
+
 
     //--------------------------------------------------------------------------------------------------
     // Показывает окно добавления статьи
@@ -125,6 +161,11 @@
     // Сохраняет в базу новую статью
     //--------------------------------------------------------------------------------------------------
     function insertArticle() {
+
+        $('#addArticleForm').attr('action', '/articles/insertArticle');
+        $('#addArticleForm').submit();
+        return true;
+
         var idCategory = $('#inputCategory').val();
         var header = $('#inputHeader').val();
         var title = $('#inputTitle').val();
@@ -155,6 +196,17 @@
             $('#inputHeader').val(data.header);
             $('#inputTitle').val(data.title);
             $('#inputDescription').val(data.description);
+
+            if(data.tags.length) {
+                var i = 0;
+                while(data.tags[i]) {
+                    var tag = data.tags[i];
+                    $('#oldTags').append('<span class="btn" id="remTag'+tag.id+'" onClick="removeTag('+tag.id+',' + data.id + ')">удалить ' + tag.title + ' </span> ');
+                    ++i;
+                }
+                i = 0;
+            }
+
             CKEDITOR.instances.inputContent.setData(data.content);
             $('#saveButton').removeAttr('onClick').attr('onClick', 'updateArticle(' + id +  ')');
 
@@ -168,6 +220,11 @@
     //--------------------------------------------------------------------------------------------------
     function updateArticle(id) {
         if(id == '') return false;
+
+        $('#addArticleForm').attr('action', '/articles/updateArticle');
+        $('#addArticleForm').prepend('<input type="hidden" name="idArticle" value="'+id+'">');
+        $('#addArticleForm').submit();
+        return true;
 
         var idCategory = $('#inputCategory').val();
         var header = $('#inputHeader').val();
@@ -196,6 +253,9 @@
     // Очишает форму
     //--------------------------------------------------------------------------------------------------
     function resetForm() {
+        tags = 0
+        $('#tags').html('');
+        $('#oldTags').html('');
         $('#inputCategory').val('');
         $('#inputHeader').val('');
         $('#inputTitle').val('');
@@ -216,6 +276,14 @@
             $('#listArticles').html(data);
         })
     }
+
+    function removeTag(tagId, articleId) {
+        $.get('/articles/removeTagFromArticle', {tagId: tagId, articleId: articleId}, function (data) {
+            data = $.parseJSON(data);
+            $('#remTag'+data.tagId).remove();
+        })
+    }
+
 
 </script>
 @endsection

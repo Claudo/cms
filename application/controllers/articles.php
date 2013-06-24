@@ -21,15 +21,34 @@ class Articles_Controller extends Base_Controller {
     // Добавление новой статьи
     //--------------------------------------------------------------------------------------------------
     public function action_insertArticle() {
+
         $article = new Articles;
         $article->title = Input::get('title');
         $article->description = Input::get('description');
         $article->header = Input::get('header');
         $article->content = Input::get('content');
+
+        $file = Input::file('imgPreview');
+        if($file['tmp_name']) {
+            Images::createPreview($file['tmp_name'], 100, 100, false);
+            $article->img_preview = file_get_contents($file['tmp_name']);;
+        }
+
         $article->id_category = Input::get('idCategory');
         $article->save();
 
-        return true;
+
+        $tags = Input::get('tag');
+
+        if (!empty($tags) && $article->id) {
+            Tags::saveTags($tags, $article);
+        }
+
+        if(Request::ajax())
+            return true;
+        else
+            return Redirect::to('/articles/'.$article->id_category);
+
     }
 
     //--------------------------------------------------------------------------------------------------
@@ -41,7 +60,25 @@ class Articles_Controller extends Base_Controller {
         $article->title = Input::get('title');
         $article->description = Input::get('description');
         $article->content = Input::get('content');
+
+        $file = Input::file('imgPreview');
+
+        if($file['tmp_name']) {
+            Images::createPreview($file['tmp_name'], 100, 100, false);
+            $article->img_preview = file_get_contents($file['tmp_name']);;
+        }
         $article->save();
+
+        $tags = Input::get('tag');
+
+        if (!empty($tags) && $article->id) {
+            Tags::saveTags($tags, $article);
+        }
+
+        if(Request::ajax())
+            return true;
+        else
+            return Redirect::to('/articles/'.$article->id_category.'/'.Input::get('idArticle'));
     }
 
     //--------------------------------------------------------------------------------------------------
@@ -51,7 +88,9 @@ class Articles_Controller extends Base_Controller {
         $idArticle = $_POST['idArticle'];
         if(!empty($idArticle)) {
             $article = Articles::find($idArticle);
+            $tags = Tags::getTagsByArticle($article);
             $article = $article->to_array();
+            $article['tags'] = $tags;
             return json_encode($article);
         }
         else return false;
@@ -62,8 +101,10 @@ class Articles_Controller extends Base_Controller {
     //--------------------------------------------------------------------------------------------------
     function action_deleteArticle() {
         $idArticle = Input::get('idArticle');
-        if (!empty($idArticle)) { 
-            Articles::find($idArticle)->delete();
+        if (!empty($idArticle)) {
+            $article = Articles::find($idArticle);
+            $article->tags()->delete();
+            $article->delete();
             return true;
         } else {
             return false;
@@ -107,20 +148,24 @@ class Articles_Controller extends Base_Controller {
         }
         
         $article_arr = $article->to_array();
+        $article_arr['tags'] = Tags::getTagsByArticle($article);
 
-        $categoryArr = Categories::getCategoryById($idCategory);                
-        $categoryName = $categoryArr[0]['name_category'];   
+        $categoryArr = Categories::getCategoryById($idCategory);
+        $categoryName = $categoryArr[0]['name_category'];
         $breadcrumbsArr = array(
                                 array ('name' => 'статьи', 'url' => '/articles/'),
                                 array ('name' => $categoryName, 'url' => '/articles/'.$idCategory),
                                 array ('name' => $article_arr['header'], 'url' => '')
                                 );
         
-        $breadcrumbs = Controller::call('breadcrumbs@createBreadcrumbs', array($breadcrumbsArr)); 
+        $breadcrumbs = Controller::call('breadcrumbs@createBreadcrumbs', array($breadcrumbsArr));
+
+        $commentsView = Controller::call('comments@index', array($idArticle, 1));
 
 
         $view = View::make('articles.show_article')
                         ->with('navActive', 'articles')
+                        ->with('commentsView', $commentsView)
                         ->with('tree', $tree)
                         ->with('article_arr', $article_arr)
                         ->with('idCategory', $idCategory)
@@ -174,5 +219,35 @@ class Articles_Controller extends Base_Controller {
         }
        
        return $view; 
-    }  
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // Получение превью статьи (by Nagovski)
+    //--------------------------------------------------------------------------------------------------
+    public function action_imgPreview($idArticle) {
+        $article = Articles::find($idArticle);
+        $article = $article->to_array();
+        $image = $article['img_preview'];
+        if(!$image) {
+            return '';
+        }
+        header("Content-type: image/jpeg");
+        echo $image;
+        exit;
+    }
+    //--------------------------------------------------------------------------------------------------
+    // Удаление одного тега (by Nagovski)
+    //--------------------------------------------------------------------------------------------------
+    public function action_removeTagFromArticle() {
+
+        $articleId = Input::get('articleId');
+        $tagId = Input::get('tagId');
+
+        $article = Articles::find($articleId);
+        $pivot = $article->tags()->pivot();
+        $pivot->where('tags_id', '=', $tagId)->delete();
+
+        $res = array('tagId' => $tagId);
+        return json_encode($res);
+    }
 }

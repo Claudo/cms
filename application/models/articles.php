@@ -7,6 +7,16 @@ class Articles extends Eloquent {
     public static $table = 'articles';
     static $onPage = 4; //A может сделать тебя константой??
 
+    public function tags()
+    {
+        return $this->has_many_and_belongs_to('Tags');
+    }
+
+    public function comments()
+    {
+        return $this->has_many('Comment');
+    }
+
     //--------------------------------------------------------------------------------------------------
     // Получить все статьи в заданной категории в виде массива
     //--------------------------------------------------------------------------------------------------
@@ -59,4 +69,6 @@ class Articles extends Eloquent {
 
         return $articles_array;
     }
+
+
 }
