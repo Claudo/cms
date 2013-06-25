@@ -71,7 +71,13 @@ class Comments_Controller extends Base_Controller {
 
         $caplen = 6;
         $width = 120; $height = 20;
-        $font = $_SERVER['DOCUMENT_ROOT'].'public/img/comic.ttf';
+        $docRoot = $_SERVER['DOCUMENT_ROOT'];
+        $sep = '';
+        if(substr($docRoot,-1) != '/') {
+            $sep = '/';
+        }
+        $font = $docRoot.$sep.'public/img/comic.ttf';
+
         $fontsize = 14;
 
         header('Content-type: image/png');

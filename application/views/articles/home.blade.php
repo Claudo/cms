@@ -201,7 +201,7 @@
                 var i = 0;
                 while(data.tags[i]) {
                     var tag = data.tags[i];
-                    $('#oldTags').append('<span class="btn" id="remTag'+tag.id+'" onClick="removeTag('+tag.id+',' + data.id + ')">удалить ' + tag.title + ' </span> ');
+                    $('#oldTags').append('<span class="btn" id="remTag'+tag.id+'" onClick="removeTag('+tag.id+',' + data.id + ')">' + tag.title + ' &times;</span> ');
                     ++i;
                 }
                 i = 0;

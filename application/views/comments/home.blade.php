@@ -6,41 +6,68 @@
     .comment {
         margin: 50px 0 0px 0;
     }
-</style>
 
-<form id="addComments" name='addComments'>
+    #addComments {
+        width: 500px;
+        position: relative;
+        left: -30px;
+    }
+
+    #addComments label{
+        width: 150px;
+    }
+
+    .inputComment {
+        width: 306px;
+    }
+
+
+
+</style>
+<hr>
+<h3>Комментарии</h3>
+
+<form class="form-horizontal" id="addComments" name='addComments'>
     <!-- Name -->
     <div class="control-group">
-        <label class="control-label" for="inputName">Имя: </label>
+        <label class="control-label" for="inputName">Имя:</label>
         <div class="controls">
-            <input type="text" id="inputName" name="name" ">
+
+             <input type="text" id="inputName" name="name" class='inputComment'>
+
         </div>
     </div>
+
     <div class="control-group">
-        <label class="control-label" for="inputEmail">E-mail: </label>
+        <label class="control-label" for="inputEmail">E-mail:</label>
         <div class="controls">
-            <input type="text" id="inputEmail" name="email">
+
+             <input type="text" id="inputEmail" name="email" class='inputComment'>
+
         </div>
     </div>
     <!-- Text -->
     <div class="control-group">
         <label class="control-label" for="inputText">Текст:</label>
         <div class="controls">
-            <textarea name="text" id="inputText" name="inputText" ></textarea>
+
+            <textarea name="text" id="inputText" name="inputText" class='inputComment'></textarea>
+
         </div>
     </div>
     <!-- Captcha -->
     <div class="control-group">
         <label class="control-label" for="inputCaptcha">Введите буквы с картинки:</label>
-        <img style='margin:10px' id='imgCaptcha' src='http://{{$_SERVER["HTTP_HOST"]}}/captcha'>
-        <a href='#' onClick='$("#imgCaptcha").attr("src", $("#imgCaptcha").attr("src") +"?"+ Math.random()); return false;'>Обновить</a>
         <div class="controls">
-            <input type="text" id="inputCaptcha" name="email">
+        <img style='margin:0 15px 5px 15px;' id='imgCaptcha' src='http://{{$_SERVER["HTTP_HOST"]}}/captcha'>
+        <a  href='#' onClick='$("#imgCaptcha").attr("src", "http://{{$_SERVER["HTTP_HOST"]}}/captcha?"+ Math.random()); return false;'>Обновить</a>
+        <br>
+        <input style='margin:10px 0 0 0;' type="text" id="inputCaptcha" name="captcha" class='inputComment'>
         </div>
     </div>
     <input type='hidden' name='artId' id='artId' value='{{ $artId }}'>
     <br>
-    <input type='button' value='Отправить' onClick="addComment()" class="btn btn-primary">
+    <input type='button' value='Отправить' onClick="addComment()" class="btn btn-primary" style="float:right;">
 </form>
 <div id="comments">
     @foreach($comments as $comment)
@@ -67,12 +94,13 @@
         var comCaptcha = $('#inputCaptcha').val();
         if(!comName || !comName || !comText || !comCaptcha) {
             alert('Заполните все поля');
+            return false;
         }
         $.get('/comments/addComment',{name: comName, email: comEmail, text: comText, artId: artId, captcha: comCaptcha}, function(data) {
             data = $.parseJSON(data);
             if(!data.captcha) {
                 alert('Не правильные символы с картинки');
-                $("#imgCaptcha").attr("src", $("#imgCaptcha").attr("src") +"?"+ Math.random());
+                $("#imgCaptcha").attr("src", "http://{{$_SERVER['HTTP_HOST']}}/captcha?"+ Math.random());
                 return false;
             }
 
@@ -81,7 +109,7 @@
             comment.append('<div class="comment-email"><b>E-mail:</b> '+data.email+'</div>');
             comment.append('<div class="comment-text">'+data.text+'</div>');
             $('#comments').append(comment);
-            $("#imgCaptcha").attr("src", $("#imgCaptcha").attr("src") +"?"+ Math.random());
+            $("#imgCaptcha").attr("src", "http://{{$_SERVER['HTTP_HOST']}}/captcha?"+ Math.random());
         });
     }
     //--------------------------------------------------------------------------------------------------
