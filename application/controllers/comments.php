@@ -12,6 +12,8 @@ class Comments_Controller extends Base_Controller {
             $result[] = $comment->to_array();
         }
 
+        $result = array_reverse($result);
+
         $view = View::make('comments.home')
                             ->with('artId', $artId)
                             ->with('admin', $admin)
@@ -27,27 +29,38 @@ class Comments_Controller extends Base_Controller {
         $res = array();
         $codeCaptcha = Input::get('captcha');
 
+        $email = Input::get('email');
+        $valid_mail = preg_match('/^((\"[^\"\f\n\r\t\v\b]+\")|([\w\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+(\.[\w\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+)*))@((\[(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))\])|(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))|((([A-Za-z0-9\-])+\.)+[A-Za-z\-]+))$/D', $email);
+
+        if(!$valid_mail) {
+            $res['wrongEmail'] = 1;
+        }
+
         session_start();
         if ( !(isset($_SESSION['captcha']) && strtoupper($_SESSION['captcha']) == strtoupper($codeCaptcha)) ) {
-            $res['captcha'] = 0;
-            return json_encode($res);
-        } else {
-            $name = Input::get('name');
-            $email = Input::get('email');
-            $text = Input::get('text');
-            $artId = Input::get('artId');
+            $res['wrongCaptcha'] = 1;
 
-            $comment = new Comment();
-            $comment->articles_id = $artId;
-            $comment->name = $name;
-            $comment->email = $email;
-            $comment->text = $text;
-            $comment->save();
-
-            $res = $comment->to_array();
-            $res['captcha'] = 1;
-            return json_encode($res);
         }
+
+        if(isset($res['wrongEmail']) || isset($res['wrongCaptcha']))
+            return json_encode($res);
+
+        $name = Input::get('name');
+        $email = Input::get('email');
+        $text = Input::get('text');
+        $artId = Input::get('artId');
+
+        $comment = new Comment();
+        $comment->articles_id = $artId;
+        $comment->name = $name;
+        $comment->email = $email;
+        $comment->text = $text;
+        $comment->save();
+
+        $res = $comment->to_array();
+        $res['captcha'] = 1;
+        return json_encode($res);
+
     }
 
     //--------------------------------------------------------------------------------------------------

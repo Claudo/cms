@@ -98,8 +98,12 @@
         }
         $.get('/comments/addComment',{name: comName, email: comEmail, text: comText, artId: artId, captcha: comCaptcha}, function(data) {
             data = $.parseJSON(data);
-            if(!data.captcha) {
-                alert('Не правильные символы с картинки');
+
+            if(data.wrongCaptcha || data.wrongEmail) {
+                var str = '';
+                str += data.wrongCaptcha ? 'Не правильные символы с картинки! \r\n':'';
+                str += data.wrongEmail ? 'Не правильно набранный e-mail!':'';
+                alert(str);
                 $("#imgCaptcha").attr("src", "http://{{$_SERVER['HTTP_HOST']}}/captcha?"+ Math.random());
                 return false;
             }
@@ -108,7 +112,7 @@
             comment.append('<div class="comment-name"><b>Имя:</b> '+data.name+'</div>');
             comment.append('<div class="comment-email"><b>E-mail:</b> '+data.email+'</div>');
             comment.append('<div class="comment-text">'+data.text+'</div>');
-            $('#comments').append(comment);
+            $('#comments').prepend(comment);
             $("#imgCaptcha").attr("src", "http://{{$_SERVER['HTTP_HOST']}}/captcha?"+ Math.random());
         });
     }
