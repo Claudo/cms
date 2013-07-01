@@ -6,7 +6,6 @@ class Articles extends Eloquent {
     //--------------------------------------------------------------------------------------------------
     public static $table = 'articles';
     static $onPage = 4; //A может сделать тебя константой??
-    public static $hidden = array('img_preview');
 
     public function tags()
     {
