@@ -24,12 +24,10 @@
 
 
 </style>
-<hr>
-<h3>Комментарии</h3>
 
-<form class="form-horizontal" id="addComments" name='addComments'>
+<?php /*<form class="form-horizontal" id="addComments" name='addComments'>
     <!-- Name -->
-    <div class="control-group">
+   <div class="control-group">
         <label class="control-label" for="inputName">Имя:</label>
         <div class="controls">
 
@@ -68,7 +66,7 @@
     <input type='hidden' name='artId' id='artId' value='{{ $artId }}'>
     <br>
     <input type='button' value='Отправить' onClick="addComment()" class="btn btn-primary" style="float:right;">
-</form>
+</form> */?>
 <div id="comments">
     @foreach($comments as $comment)
         <div class="comment" id='com{{$comment['id']}}'>
@@ -86,7 +84,7 @@
     //--------------------------------------------------------------------------------------------------
     // Добавление комментария (by Nagovski)
     //--------------------------------------------------------------------------------------------------
-    function addComment() {
+    <?php /*function addComment() {
         var comName = $('#inputName').val();
         var comEmail = $('#inputEmail').val();
         var artId = $('#artId').val();
@@ -115,7 +113,7 @@
             $('#comments').prepend(comment);
             $("#imgCaptcha").attr("src", "http://{{$_SERVER['HTTP_HOST']}}/captcha?"+ Math.random());
         });
-    }
+    }*/?>
     //--------------------------------------------------------------------------------------------------
     // Удаление комментария (by Nagovski)
     //--------------------------------------------------------------------------------------------------

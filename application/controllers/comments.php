@@ -4,7 +4,7 @@ class Comments_Controller extends Base_Controller {
     //--------------------------------------------------------------------------------------------------
     // Получение блока комментариев для статьи (by Nagovski)
     //--------------------------------------------------------------------------------------------------
-    public  function action_index($artId, $admin = 0) {
+    public function action_index($artId, $admin = 0) {
         $comments = Comment::where('articles_id', '=', $artId)->get();
 
         $result = array();

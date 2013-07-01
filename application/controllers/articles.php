@@ -251,4 +251,30 @@ class Articles_Controller extends Base_Controller {
         $res = array('tagId' => $tagId);
         return json_encode($res);
     }
+
+    public function action_getArticleData($artId) {
+        $article = Articles::find($artId);
+        $tags = Tags::getTagsByArticle($article);
+        $category = Categories::getCategoryById($article->id_category);
+        $article = $article->to_array();
+        $article['tags'] = $tags;
+        $article['category'] = $category;
+        $data = serialize($article);
+        return $data;
+    }
+
+    public function action_getArticlesListData($catId, $page) {
+        $offset=Articles::getOffset($catId, $page);
+        $articles = Articles::getArticlesPage($catId, $offset);
+        $data = array();
+        $data['articles'] = $articles;
+        $data['pageCount'] = Articles::getPagesCount($catId);
+        $category = Categories::find($catId);
+        if($category) {
+            $data['category'] = $category->to_array();
+        }
+        $data = serialize($data);
+        return $data;
+    }
+
 }

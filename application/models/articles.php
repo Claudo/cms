@@ -6,6 +6,7 @@ class Articles extends Eloquent {
     //--------------------------------------------------------------------------------------------------
     public static $table = 'articles';
     static $onPage = 4; //A может сделать тебя константой??
+    public static $hidden = array('img_preview');
 
     public function tags()
     {
@@ -34,7 +35,12 @@ class Articles extends Eloquent {
     // Количество страниц в категории (by Igor)
     //----------------------------------------------------------------------------------------------------------------------
     public static function getPagesCount($idCategory) {
-        $total=Articles::where('id_category', '=', $idCategory)->count();
+        if($idCategory){
+            $total=Articles::where('id_category', '=', $idCategory)->count();
+        } else {
+            $total=Articles::count();
+        }
+
         $pages=ceil($total/self::$onPage);
 
         return $pages;
@@ -61,8 +67,13 @@ class Articles extends Eloquent {
     //----------------------------------------------------------------------------------------------------------------------
     public static function getArticlesPage($idCategory, $offset) {
 
-        $articles_array = array();      
-        $articles = Articles::where('id_category', '=', $idCategory)->skip($offset)->take(self::$onPage)->get();
+        $articles_array = array();
+        if($idCategory) {
+            $articles = Articles::where('id_category', '=', $idCategory)->skip($offset)->take(self::$onPage)->get();
+        } else {
+            $articles = Articles::skip($offset)->take(self::$onPage)->get();
+        }
+
         foreach ($articles as $article) {
             $articles_array[] = $article->to_array();
         }

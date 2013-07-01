@@ -43,7 +43,9 @@
     <div style='float:left; margin: 0 10px 10px 0;'><img src="/imgpreview/{{$article_arr['id']}}" border=0 alt=''></div>
     {{ $article_arr['content'] }}
     <div style="clear:both"></div>
-{{$commentsView}}
+    <hr>
+    <h3>Комментарии</h3>
+    {{$commentsView}}
 
 
 <!-- Модальное окно для редактирования статьи -->
