@@ -18,7 +18,9 @@ class Comments_Controller extends Base_Controller {
                             ->with('artId', $artId)
                             ->with('admin', $admin)
                             ->with('navActive', 'articles')
+                            ->with('moder', Comment::$moder)
                             ->with('comments', $result);
+
         return $view;
     }
     //--------------------------------------------------------------------------------------------------
@@ -75,6 +77,14 @@ class Comments_Controller extends Base_Controller {
         return json_encode($res);
     }
 
+    public function action_approveComment() {
+        $comId = Input::get('commentId');
+        $comment = Comment::find($comId);
+        $comment->check = 1;
+        $comment->save();
+        $res = array('id' => $comId);
+        return json_encode($res);
+    }
     //--------------------------------------------------------------------------------------------------
     // Получение капчи (by Nagovski)
     //--------------------------------------------------------------------------------------------------

@@ -69,17 +69,22 @@
 </form> */?>
 <div id="comments">
     @foreach($comments as $comment)
+        @if($admin || $check || !$moder)
         <div class="comment" id='com{{$comment['id']}}'>
             @if($admin)
                 <div type="button" onClick="removeComment({{$comment['id']}});" class="close" data-dismiss="modal" aria-hidden="true">×</div>
+            @endif
+            @if(!$comment['check'] && $moder && $admin)
+                <a href='#' id="approve{{$comment['id']}}" onClick="approveComment({{$comment['id']}}); return false;">approve</a>
             @endif
             <div class="comment-name"><b>Имя:</b> {{$comment['name']}}</div>
             <div class="comment-email"><b>E-mail:</b> {{$comment['email']}}</div>
             <div class="comment-text">{{$comment['text']}}</div>
         </div>
+        @endif
     @endforeach
 </div>
-
+@if($admin)
 <script>
     //--------------------------------------------------------------------------------------------------
     // Добавление комментария (by Nagovski)
@@ -117,10 +122,20 @@
     //--------------------------------------------------------------------------------------------------
     // Удаление комментария (by Nagovski)
     //--------------------------------------------------------------------------------------------------
+
     function removeComment(comId) {
         $.get('/comments/removeComment', {commentId: comId}, function(data) {
             data = $.parseJSON(data);
             $('#com'+data.id).remove();
         })
     }
+    @if($moder)
+    function approveComment(comId) {
+        $.get('/comments/approveComment', {commentId: comId}, function(data) {
+            data = $.parseJSON(data);
+            $('#approve'+data.id).remove();
+        })
+    }
+    @endif
 </script>
+@endif

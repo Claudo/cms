@@ -277,4 +277,20 @@ class Articles_Controller extends Base_Controller {
         return $data;
     }
 
+    public function action_getArticlesDataByTag($tag) {
+        $tag = str_replace('%20',' ',$tag);
+        $tags = Tags::where('title', '=', $tag)->get();
+        $articles = $tags[0]->articles()->get();
+        $res = array();
+        $res['tag'] = $tag;
+        $res['pageCount'] = count($articles);
+        $res['articles'] = array();
+        foreach($articles as $article) {
+            $res['articles'][] = $article->to_array();
+        }
+
+        $data = serialize($res);
+        return $data;
+    }
+
 }
