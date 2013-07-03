@@ -2,6 +2,8 @@
 class Blocks_Controller extends Base_Controller {
 
     public  function action_index() {
+        if(!Auth::user())
+            return Redirect::to('login');
 
         $page = Input::get('page') ? Input::get('page') : 1;
         $blocks = Blocks::getBlocksByPageNum($page);
@@ -20,6 +22,8 @@ class Blocks_Controller extends Base_Controller {
     }
 
     public function action_saveBlock() {
+        if(!Auth::user())
+            return Redirect::to('login');
 
         $blockId = Input::get('id');
 
@@ -40,12 +44,18 @@ class Blocks_Controller extends Base_Controller {
     }
 
     public function action_removeBlock() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $blockId = Input::get('id');
         Blocks::find($blockId)->delete();
         return true;
     }
 
     public function action_getBlockById() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $blockId = Input::get('id');
         $block = Blocks::find($blockId);
         $block = $block->to_array();

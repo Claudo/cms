@@ -2,6 +2,8 @@
 class Gallery_Controller extends Base_Controller {
     
     public  function action_index() {
+        if(!Auth::user())
+            return Redirect::to('login');
     	$albums = Albums::getAlbums();
 
         $breadcrumbsArr[] = array ('name' => 'галерея', 'url' => '');
@@ -24,6 +26,8 @@ class Gallery_Controller extends Base_Controller {
     // Добавление нового альбома
     //----------------------------------------------------------------------------------------------------------------------
     public function action_insertAlbum() {
+        if(!Auth::user())
+            return Redirect::to('login');
     	$album = new Albums;
 
     	$album->name = Input::get('albumName'); 
@@ -40,7 +44,9 @@ class Gallery_Controller extends Base_Controller {
     //----------------------------------------------------------------------------------------------------------------------
     // Добавление нового изображения
     //----------------------------------------------------------------------------------------------------------------------
-    public function action_insertImage() {                         
+    public function action_insertImage() {
+        if(!Auth::user())
+            return Redirect::to('login');
         $images = new Images;
 
         //получаем информацию о файле, даём уникальное имя
@@ -76,6 +82,8 @@ class Gallery_Controller extends Base_Controller {
     // Получить изображения ввиде массива
     //----------------------------------------------------------------------------------------------------------------------
     public function action_getImages($idAlbum) {
+        if(!Auth::user())
+            return Redirect::to('login');
 
         // Получаем список всех альбомов, конкретный альбом и 
         // количество страниц в нем
@@ -124,6 +132,8 @@ class Gallery_Controller extends Base_Controller {
     // Вернуть данные для редактирования альбома 
     //----------------------------------------------------------------------------------------------------------------------
     public function action_getAlbumsJson() {
+        if(!Auth::user())
+            return Redirect::to('login');
         $idAlbum = Input::get('idAlbum');
         if(!empty($idAlbum)) {
             $album = Albums::find($idAlbum);
@@ -138,6 +148,8 @@ class Gallery_Controller extends Base_Controller {
     // Обновить данные альбома
     //----------------------------------------------------------------------------------------------------------------------
     public function action_updateAlbum() {
+        if(!Auth::user())
+            return Redirect::to('login');
         $album = Albums::find(Input::get('idAlbum'));
 
         $album->name = Input::get('albumName'); 
@@ -155,6 +167,8 @@ class Gallery_Controller extends Base_Controller {
     // Получить данные для редактирования изображения
     //----------------------------------------------------------------------------------------------------------------------
     public function action_getImagesJson() {
+        if(!Auth::user())
+            return Redirect::to('login');
         
         $idImage = Input::get('idImage');
 
@@ -172,6 +186,8 @@ class Gallery_Controller extends Base_Controller {
     // Обновить данные изображения
     //----------------------------------------------------------------------------------------------------------------------
     public function action_updateImage() {
+        if(!Auth::user())
+            return Redirect::to('login');
 
         $image = Images::find(Input::get('idImage'));
 
@@ -200,6 +216,9 @@ class Gallery_Controller extends Base_Controller {
     // Удаление альбома 
     //----------------------------------------------------------------------------------------------------------------------
     public function action_delAlbum() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $idAlbum = Input::get('idAlbum');
         if(empty($idAlbum)) return false;
 
@@ -217,6 +236,9 @@ class Gallery_Controller extends Base_Controller {
     // Удаление изображения
     //----------------------------------------------------------------------------------------------------------------------
     public function action_delImage() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $idImage = Input::get('idImage');
         if(empty($idImage)) return false;
 
@@ -229,6 +251,9 @@ class Gallery_Controller extends Base_Controller {
     // Вспомагательная функция для удаления альбома и изображения
     //----------------------------------------------------------------------------------------------------------------------
     public function delImageFile($image) {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $imageArr = $image->to_array();
         $imagePath = path('public').'img/gallery/'.$imageArr['image'];
         $previewPath = path('public').'img/gallery/small/'.$imageArr['preview'];

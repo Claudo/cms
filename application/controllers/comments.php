@@ -5,6 +5,7 @@ class Comments_Controller extends Base_Controller {
     // Получение блока комментариев для статьи (by Nagovski)
     //--------------------------------------------------------------------------------------------------
     public function action_index($artId, $admin = 0) {
+
         $comments = Comment::where('articles_id', '=', $artId)->get();
 
         $result = array();
@@ -27,6 +28,9 @@ class Comments_Controller extends Base_Controller {
     // Добавление комментария (by Nagovski)
     //--------------------------------------------------------------------------------------------------
     public function action_addComment() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
 
         $res = array();
         $codeCaptcha = Input::get('captcha');
@@ -70,6 +74,8 @@ class Comments_Controller extends Base_Controller {
     //--------------------------------------------------------------------------------------------------
 
     public function action_removeComment() {
+        if(!Auth::user())
+            return Redirect::to('login');
         $comId = Input::get('commentId');
         Comment::find($comId)->delete();
 
@@ -78,6 +84,8 @@ class Comments_Controller extends Base_Controller {
     }
 
     public function action_approveComment() {
+        if(!Auth::user())
+            return Redirect::to('login');
         $comId = Input::get('commentId');
         $comment = Comment::find($comId);
         $comment->check = 1;

@@ -21,6 +21,7 @@
           @if($navActive == 'blocks')     <li class="active"> @else <li> @endif<a href="/blocks">Статичные HTML блоки</a></li>
         </ul>
       </div>
+
     </div>
 
     <div class="row-fluid">

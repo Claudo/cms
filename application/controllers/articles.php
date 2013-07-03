@@ -1,6 +1,10 @@
 <?php
 class Articles_Controller extends Base_Controller {
     public  function action_index() {
+
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $categories = Categories::getAllCategories();
 
         $breadcrumbsArr[] = array ('name' => 'статьи', 'url' => '');
@@ -21,6 +25,8 @@ class Articles_Controller extends Base_Controller {
     // Добавление новой статьи
     //--------------------------------------------------------------------------------------------------
     public function action_insertArticle() {
+        if(!Auth::user())
+            return Redirect::to('login');
 
         $article = new Articles;
         $article->title = Input::get('title');
@@ -55,6 +61,9 @@ class Articles_Controller extends Base_Controller {
     // Обновление статьи
     //--------------------------------------------------------------------------------------------------
     public function action_updateArticle() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $article = Articles::find(Input::get('idArticle'));
         $article->header = Input::get('header');
         $article->title = Input::get('title');
@@ -85,6 +94,9 @@ class Articles_Controller extends Base_Controller {
     // Отдает в формате JSON данные для редактирования статьи
     //--------------------------------------------------------------------------------------------------
     function action_getArticleJson() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $idArticle = $_POST['idArticle'];
         if(!empty($idArticle)) {
             $article = Articles::find($idArticle);
@@ -100,6 +112,9 @@ class Articles_Controller extends Base_Controller {
     // Удаление статьи
     //--------------------------------------------------------------------------------------------------
     function action_deleteArticle() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $idArticle = Input::get('idArticle');
         if (!empty($idArticle)) {
             $article = Articles::find($idArticle);
@@ -116,6 +131,9 @@ class Articles_Controller extends Base_Controller {
     // Массив статей в заданной категории
     //--------------------------------------------------------------------------------------------------
     public function action_listArticles($idCategory) {
+        if(!Auth::user())
+            return Redirect::to('login');
+
         $articles = Articles::getArticlesInCategory($idCategory);
         $tree = Categories::getAllCategories();
 
@@ -139,6 +157,9 @@ class Articles_Controller extends Base_Controller {
     // Массив с содержимым стаьи (by Igor)
     //--------------------------------------------------------------------------------------------------
     function action_getArticle($idCategory, $idArticle){
+        if(!Auth::user())
+            return Redirect::to('login');
+
         if(empty($idArticle) || empty($idCategory)) return false;
 
         $tree = Categories::getAllCategories();
@@ -179,6 +200,8 @@ class Articles_Controller extends Base_Controller {
     // Получение части статей для вывода на странице (by Igor)
     //--------------------------------------------------------------------------------------------------
     function action_getArticlesOnPage($idCategory) {
+        if(!Auth::user())
+            return Redirect::to('login');
        
         $tree = Categories::getAllCategories();
         $pages=Articles::getPagesCount($idCategory);
@@ -240,6 +263,8 @@ class Articles_Controller extends Base_Controller {
     // Удаление одного тега (by Nagovski)
     //--------------------------------------------------------------------------------------------------
     public function action_removeTagFromArticle() {
+        if(!Auth::user())
+            return Redirect::to('login');
 
         $articleId = Input::get('articleId');
         $tagId = Input::get('tagId');

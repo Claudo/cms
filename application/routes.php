@@ -42,8 +42,43 @@ Route::get('/', function()
 //--------------------------------------------------------------------------------------------------
 Route::get('/', function()
 {
-	return View::make('home')->with('navActive', '');
+    if(Auth::user()) {
+	    return View::make('home')->with('navActive', '');
+    } else {
+        return View::make('login');
+    }
 });
+//--------------------------------------------------------------------------------------------------
+// Авторизация
+//--------------------------------------------------------------------------------------------------
+Route::post('login', function() {
+
+    // get POST data
+    $userdata = array(
+        'username' => Input::get('username'),
+        'password' => Input::get('password')
+    );
+
+    if ( Auth::attempt($userdata) )
+    {
+        // we are now logged in, go to home
+        return Redirect::to('/');
+    }
+    else
+    {
+        // auth failure! lets go back to the login
+        return Redirect::to('login')
+            ->with('login_errors', true);
+        // pass any error notification you want
+        // i like to do it this way :)
+    }
+
+});
+
+Route::get('login', function() {
+    return View::make('login');
+});
+
 
 //--------------------------------------------------------------------------------------------------
 // Список статей в заданной категории
