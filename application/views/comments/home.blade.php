@@ -69,7 +69,7 @@
 </form> */?>
 <div id="comments">
     @foreach($comments as $comment)
-        @if($admin || $check || !$moder)
+        @if($admin || $comment['check'] || !$moder)
         <div class="comment" id='com{{$comment['id']}}'>
             @if($admin)
                 <div type="button" onClick="removeComment({{$comment['id']}});" class="close" data-dismiss="modal" aria-hidden="true">×</div>
