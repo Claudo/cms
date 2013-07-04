@@ -1,6 +1,6 @@
 <?php
 class Comments_Controller extends Base_Controller {
-    public $layout;
+    public $layout = false;
     //--------------------------------------------------------------------------------------------------
     // Получение блока комментариев для статьи (by Nagovski)
     //--------------------------------------------------------------------------------------------------
@@ -12,7 +12,6 @@ class Comments_Controller extends Base_Controller {
         foreach($comments as $comment) {
             $result[] = $comment->to_array();
         }
-        $this->layout = false;
         $result = array_reverse($result);
 
         $view = View::make('comments.home')

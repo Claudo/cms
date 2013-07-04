@@ -283,7 +283,7 @@ class Articles_Controller extends Base_Controller {
         $category = Categories::getCategoryById($article->id_category);
         $article = $article->to_array();
         $article['tags'] = $tags;
-        $article['category'] = $category;
+        $article['category'] = $category[0];
         $data = serialize($article);
         return $data;
     }
