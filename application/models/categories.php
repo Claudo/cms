@@ -8,10 +8,13 @@ class Categories extends Eloquent {
 
     //--------------------------------------------------------------------------------------------------
     // Добавление категории
+    // (change 12-07-13: добавлен флаг 'unit' 
+    // определяющий модуль которому принадлежат категории (default: 1 - categories))
     //--------------------------------------------------------------------------------------------------
-    public static function addCategory($nameCategory, $parentId = null) {
+    public static function addCategory($nameCategory, $parentId = null, $unit = 1) {
         $category = new Categories;
         if($parentId) $category->parent_id = $parentId;
+        $category->for_unit = $unit;
         $category->name_category = $nameCategory;
         $category->save();
     }
@@ -30,16 +33,20 @@ class Categories extends Eloquent {
 
     //--------------------------------------------------------------------------------------------------
     // Получить все категории в виде массива
+    // (change 12-07-13: добавлен флаг 'unit' 
+    // определяющий модуль которому принадлежат категории (default: 1 - categories))
     //--------------------------------------------------------------------------------------------------
-    public static function getAllCategories() {
+    public static function getAllCategories($unit=1) {
         $categories_array = array();
-        $categories = Categories::all();
+        $categories = Categories::where('for_unit', '=', $unit)->get();
         foreach($categories as $category) {
             $categories_array[] = $category->to_array();
         }
 
         return $categories_array;
     }
+
+   
 
 
 }

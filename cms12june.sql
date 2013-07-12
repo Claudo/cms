@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.11.1deb1
+-- version 3.4.10.1deb1
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Jul 12, 2013 at 02:20 PM
--- Server version: 5.5.31
--- PHP Version: 5.4.6-1ubuntu1.2
+-- Хост: localhost
+-- Время создания: Июл 12 2013 г., 19:12
+-- Версия сервера: 5.5.31
+-- Версия PHP: 5.3.10-1ubuntu3.6
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `cms`
+-- База данных: `cms`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `albums`
+-- Структура таблицы `albums`
 --
 
 CREATE TABLE IF NOT EXISTS `albums` (
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `albums` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
 
 --
--- Dumping data for table `albums`
+-- Дамп данных таблицы `albums`
 --
 
 INSERT INTO `albums` (`id`, `name`, `title`, `description`, `header`, `content`, `cover`, `updated_at`, `created_at`) VALUES
@@ -51,7 +51,7 @@ INSERT INTO `albums` (`id`, `name`, `title`, `description`, `header`, `content`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `articles`
+-- Структура таблицы `articles`
 --
 
 CREATE TABLE IF NOT EXISTS `articles` (
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `articles` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=109 ;
 
 --
--- Dumping data for table `articles`
+-- Дамп данных таблицы `articles`
 --
 
 INSERT INTO `articles` (`id`, `title`, `description`, `header`, `content`, `id_category`, `img_preview`, `updated_at`, `created_at`) VALUES
@@ -130,7 +130,7 @@ INSERT INTO `articles` (`id`, `title`, `description`, `header`, `content`, `id_c
 -- --------------------------------------------------------
 
 --
--- Table structure for table `articles_tags`
+-- Структура таблицы `articles_tags`
 --
 
 CREATE TABLE IF NOT EXISTS `articles_tags` (
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `articles_tags` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
--- Dumping data for table `articles_tags`
+-- Дамп данных таблицы `articles_tags`
 --
 
 INSERT INTO `articles_tags` (`id`, `tags_id`, `articles_id`, `created_at`, `updated_at`) VALUES
@@ -154,7 +154,7 @@ INSERT INTO `articles_tags` (`id`, `tags_id`, `articles_id`, `created_at`, `upda
 -- --------------------------------------------------------
 
 --
--- Table structure for table `blocks`
+-- Структура таблицы `blocks`
 --
 
 CREATE TABLE IF NOT EXISTS `blocks` (
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `blocks` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=87 ;
 
 --
--- Dumping data for table `blocks`
+-- Дамп данных таблицы `blocks`
 --
 
 INSERT INTO `blocks` (`id`, `url`, `block`, `updated_at`, `created_at`) VALUES
@@ -178,7 +178,7 @@ INSERT INTO `blocks` (`id`, `url`, `block`, `updated_at`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `catalog_categories`
+-- Структура таблицы `catalog_categories`
 --
 
 CREATE TABLE IF NOT EXISTS `catalog_categories` (
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `catalog_categories` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
 --
--- Dumping data for table `catalog_categories`
+-- Дамп данных таблицы `catalog_categories`
 --
 
 INSERT INTO `catalog_categories` (`id`, `parent_id`, `name_category`, `title`, `header`, `description`, `updated_at`, `created_at`) VALUES
@@ -206,7 +206,7 @@ INSERT INTO `catalog_categories` (`id`, `parent_id`, `name_category`, `title`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `catalog_images`
+-- Структура таблицы `catalog_images`
 --
 
 CREATE TABLE IF NOT EXISTS `catalog_images` (
@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `catalog_images` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `catalog_options`
+-- Структура таблицы `catalog_options`
 --
 
 CREATE TABLE IF NOT EXISTS `catalog_options` (
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `catalog_options` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `catalog_options_values`
+-- Структура таблицы `catalog_options_values`
 --
 
 CREATE TABLE IF NOT EXISTS `catalog_options_values` (
@@ -252,7 +252,7 @@ CREATE TABLE IF NOT EXISTS `catalog_options_values` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `catalog_products`
+-- Структура таблицы `catalog_products`
 --
 
 CREATE TABLE IF NOT EXISTS `catalog_products` (
@@ -271,38 +271,39 @@ CREATE TABLE IF NOT EXISTS `catalog_products` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `categories`
+-- Структура таблицы `categories`
 --
 
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `parent_id` int(11) DEFAULT NULL,
   `name_category` text,
+  `for_unit` int(10) NOT NULL DEFAULT '1',
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=37 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=44 ;
 
 --
--- Dumping data for table `categories`
+-- Дамп данных таблицы `categories`
 --
 
-INSERT INTO `categories` (`id`, `parent_id`, `name_category`, `updated_at`, `created_at`) VALUES
-(21, NULL, 'Категория', '2013-05-08', '2013-05-08'),
-(22, NULL, 'Категория 2', '2013-05-08', '2013-05-08'),
-(23, NULL, 'Еще одна категория', '2013-05-13', '2013-05-08'),
-(28, 21, 'Подкатегория', '2013-05-08', '2013-05-08'),
-(30, 21, 'Еще одна подкатегория', '2013-05-08', '2013-05-08'),
-(31, 21, 'И еще одна подкатегория', '2013-05-08', '2013-05-08'),
-(32, 31, 'Второй уровень вложенности', '2013-05-08', '2013-05-08'),
-(34, 23, 'Ля ля ля1', '2013-05-13', '2013-05-13'),
-(35, 23, 'Ля ля ля', '2013-05-13', '2013-05-13'),
-(36, NULL, 'alea jacta est', '2013-05-28', '2013-05-28');
+INSERT INTO `categories` (`id`, `parent_id`, `name_category`, `for_unit`, `updated_at`, `created_at`) VALUES
+(21, NULL, 'Категория1', 1, '2013-07-12', '2013-05-08'),
+(22, NULL, 'Категория 2', 1, '2013-05-08', '2013-05-08'),
+(28, 21, 'Подкатегория', 1, '2013-05-08', '2013-05-08'),
+(30, 21, 'Еще одна подкатегория', 1, '2013-05-08', '2013-05-08'),
+(31, 21, 'И еще одна подкатегория', 1, '2013-05-08', '2013-05-08'),
+(32, 31, 'Второй уровень вложенности', 1, '2013-05-08', '2013-05-08'),
+(34, 23, 'Ля ля ля1', 1, '2013-05-13', '2013-05-13'),
+(35, 23, 'Ля ля ля', 1, '2013-05-13', '2013-05-13'),
+(36, NULL, 'alea jacta est1', 2, '2013-07-12', '2013-05-28'),
+(43, NULL, 'TmpCat', 2, '2013-07-12', '2013-07-12');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comments`
+-- Структура таблицы `comments`
 --
 
 CREATE TABLE IF NOT EXISTS `comments` (
@@ -318,7 +319,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
--- Dumping data for table `comments`
+-- Дамп данных таблицы `comments`
 --
 
 INSERT INTO `comments` (`id`, `articles_id`, `name`, `email`, `text`, `check`, `updated_at`, `created_at`) VALUES
@@ -331,7 +332,7 @@ INSERT INTO `comments` (`id`, `articles_id`, `name`, `email`, `text`, `check`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `images`
+-- Структура таблицы `images`
 --
 
 CREATE TABLE IF NOT EXISTS `images` (
@@ -350,7 +351,7 @@ CREATE TABLE IF NOT EXISTS `images` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
 
 --
--- Dumping data for table `images`
+-- Дамп данных таблицы `images`
 --
 
 INSERT INTO `images` (`id`, `name`, `title`, `description`, `header`, `image`, `preview`, `content`, `id_album`, `updated_at`, `created_at`) VALUES
@@ -365,7 +366,7 @@ INSERT INTO `images` (`id`, `name`, `title`, `description`, `header`, `image`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tags`
+-- Структура таблицы `tags`
 --
 
 CREATE TABLE IF NOT EXISTS `tags` (
@@ -377,7 +378,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
 
 --
--- Dumping data for table `tags`
+-- Дамп данных таблицы `tags`
 --
 
 INSERT INTO `tags` (`id`, `title`, `updated_at`, `created_at`) VALUES
@@ -394,7 +395,27 @@ INSERT INTO `tags` (`id`, `title`, `updated_at`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Структура таблицы `units`
+--
+
+CREATE TABLE IF NOT EXISTS `units` (
+  `id` int(12) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+
+--
+-- Дамп данных таблицы `units`
+--
+
+INSERT INTO `units` (`id`, `name`) VALUES
+(1, 'categories'),
+(2, 'catalog');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -407,7 +428,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `users`
+-- Дамп данных таблицы `users`
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `updated_at`, `created_at`) VALUES

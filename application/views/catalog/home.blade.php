@@ -17,7 +17,7 @@
 <div style="clear: both;"></div>
 
 <!-- Модальное окно для добавления новой категории -->
-<div id="addCategory" class="modal hide fade span4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="addCategory" class="modal hide fade span4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:500px">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="myModalLabel">Доабвить категорию</h3>
@@ -30,6 +30,7 @@
 		      <input type="text" id="inputCategory" placeholder="Категория">
               <input type="hidden" id="idCategory">
               <input type="hidden" id="idParent">
+              <input type="hidden" id="unit" value="2">
 		    </div>
 		  </div>
 		</form>
@@ -103,13 +104,15 @@
 
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="span2" id="sidebarBlock">
+    <div class="span4" id="sidebarBlock">
       <!--Sidebar content-->
-      @render('catalog.tree', array('categories' => $categories))
+      <div id="listCategories">
+        @render('catalog.tree', array('categories' => $categories))
+  	  </div>
     </div>
     <div class="span10">
       <!--Body content-->
-      b
+      <!-- список товаров / конкретный товар -->
     </div>
   </div>
 </div>
@@ -131,51 +134,129 @@
 	}
 
 	//--------------------------------------------------------------------------------------------------
-	// Получает данные для редактирования категории
-	//--------------------------------------------------------------------------------------------------
-	function getCategory(idCategory) {
+    // Показывает окно добавления подкатегории
+    //--------------------------------------------------------------------------------------------------
+    function showAddSubcategoryForm(idParent) {
+        if(idParent == null || idParent == '') {
+            alert('Не передан идентификатор родительской категоии');
+            return false;
+        }
+        
+        clearCategoryForm();
+        $('#idParent').val(idParent);
+        $('#buttonSaveCategory').removeAttr('onClick').attr('onClick', 'addSubCategory(' + idParent + ');');
+        $('#addCategoryForm').removeAttr('onSubmit').attr('onSubmit', 'addSubCategory(' + idParent + ');');
+        $('#addCategory').modal('show');
+    }
 
+    //--------------------------------------------------------------------------------------------------
+    // Добавить подкатегорию
+    //--------------------------------------------------------------------------------------------------
+    function addSubCategory(idParent) {
+        if(idParent == null || idParent == '') {
+            alert('Не передан идентификатор родительской категоии');
+            return false;
+        }
+
+        var categoryName 	= $('#inputCategory').val();
+        var unit 			= $('#unit').val();
+
+        $.post("/categories/addCategory/", {categoryName: categoryName, idParent: idParent, unit: unit}).done(function(data) {
+            $('#addCategory').modal('hide');
+            refreshTree();
+        });
+    }
+
+	//--------------------------------------------------------------------------------------------------
+	// Показывает окно для редактрования категории
+	//--------------------------------------------------------------------------------------------------
+	function showEditCategory(idCategory) {
+
+        if(idCategory == null || idCategory == '') {
+            alert('Не передан идентификатор категории');
+            return false;
+        }
+
+        // Делаем запрос, узнаем информацию о категории
+        $.post("/categories/getCategoryJson", {idCategory: idCategory}).done(function(data) {
+            var category = JSON.parse(data);
+
+           
+            // Устанавливаем значения в форму с модальным окном
+            $('#inputCategory').val(category.name_category);
+            $('#idCategory').val(category.id);
+
+            // Изменяем кнопки
+            $('#buttonDeleteCategory').removeAttr('style');
+            $('#buttonDeleteCategory').removeAttr('onClick').attr('onClick', 'deleteCategory(' + idCategory + ');')
+            $('#buttonSaveCategory').removeAttr('onClick').attr('onClick', 'updateCategory(' + idCategory + ');');
+            $('#addCategoryForm').removeAttr('onSubmit').attr('onSubmit', 'updateCategory(' + idCategory + ');');
+
+            // Показываем модальное окно
+            $('#addCategory').modal('show');
+		});
 	}
 
-	//--------------------------------------------------------------------------------------------------
-	// Обновить список категорий
-	//--------------------------------------------------------------------------------------------------
-	function refreshCategories() {
 
-	}
-
-	//--------------------------------------------------------------------------------------------------
-	// Показывает окно для редактрования формы
-	//--------------------------------------------------------------------------------------------------
-	function showEditCategoryForm(idCategory) {
-
-	}
 	
 	//--------------------------------------------------------------------------------------------------
 	// Добавление новой категории
 	//--------------------------------------------------------------------------------------------------
-	function addCategory() {
-		var idParent = $('#idParent').val();
-		var categoryName = $('#inputCategory').val();
-		$.post('/catalog/addCategory', {idParent: idParent, categoryName: categoryName}).done(function (data){
-			$('#addCategory').modal('hide');
-			refreshCategories();
-		});
-	}
+	function addCategory () {
+        var categoryName = $('#inputCategory').val();
+        var parentId = $('#idParent').val();
+        var unit = $('#inputUnit').val();
+
+        $.post("/catalog/addCategory", {categoryName: categoryName, parentId: parentId, unit: unit}).done(function(data) {
+            $('#addCategory').modal('hide');
+            refreshTree();
+        });
+    }
 
 	//--------------------------------------------------------------------------------------------------
-	// Обновление категории
-	//--------------------------------------------------------------------------------------------------
-	function editCategory(idCategory) {
+    // AJAX запрос на обновление категории
+    //--------------------------------------------------------------------------------------------------
+    function updateCategory(idCategory) {
+        if(idCategory == null || idCategory == '') {
+            alert('Не передан идентификатор категории');
+            return false;
+        }
 
-	}
+        var nameCategory = $('#inputCategory').val();
+
+        $.post("/categories/updateCategory/", {nameCategory: nameCategory, idCategory: idCategory}).done(function(data) {
+            $('#addCategory').modal('hide');
+            refreshTree();
+        });
+    }
+
 
 	//--------------------------------------------------------------------------------------------------
-	// Удаление категории
-	//--------------------------------------------------------------------------------------------------
-	function removeCategory(idCategory) {
+    // Удаление категории
+    //--------------------------------------------------------------------------------------------------
+    function deleteCategory(idCategory) {
+        if(idCategory == null || idCategory == '') {
+            alert('Не передан идентификатор категории');
+            return false;
+        }
 
-	}
+        if(window.confirm('Вы действительно хотите удалить категорию?')) {
+            $.post("/categories/deleteCategory/", {idCategory: idCategory}).done(function(data){
+                $('#addCategory').modal('hide');
+                refreshTree();
+            });
+        }
+    }
+
+	//--------------------------------------------------------------------------------------------------
+    // Обновляет дерево категорий
+    //--------------------------------------------------------------------------------------------------
+    function refreshTree() {
+        $.post("/catalog/buildCategoriesTree/").done(function(data){
+            $('#listCategories').html(data);
+        });
+    }
+
 
 	//--------------------------------------------------------------------------------------------------
 	// Показыает окно добавления продукта
@@ -267,6 +348,11 @@
 	//--------------------------------------------------------------------------------------------------
 	function clearCategoryForm() {
 		$('#inputCategory').val('');
+		$('#idParent').val('');
+		$('#idCategory').val('');
+		$('#buttonDeleteCategory').attr('style', 'display:none;');
+        $('#buttonSaveCategory').removeAttr('onClick').attr('onClick', 'addCategory();');
+        $('#addCategoryForm').removeAttr('onSubmit').attr('onSubmit', 'addCategory();');
 	}
 
 	//--------------------------------------------------------------------------------------------------

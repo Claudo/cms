@@ -1,5 +1,8 @@
 <?php
 class Catalog_Controller extends Base_Controller {
+
+    static $unit = 2; //индекс модуля "catalog"
+
     public  function action_index() {
         $categories = $this->getCategories(); 
         $view = View::make('catalog.home')->with('navActive', 'catalog')
@@ -16,9 +19,21 @@ class Catalog_Controller extends Base_Controller {
       if(!Auth::user())
             return Redirect::to('login');
 
-      $categories = catalogCategories::getCategories();
-
+      $categories = Categories::getAllCategories(self::$unit);
     	return $categories;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // 
+    //----------------------------------------------------------------------------------------------------------------------
+    public  function action_buildCategoriesTree() {
+        if(!Auth::user())
+            return Redirect::to('login');
+
+        $categories = Categories::getAllCategories(self::$unit);
+        $view = View::make('catalog.tree')->with('categories', $categories);
+
+        return $view;
     }
 
     //--------------------------------------------------------------------------------------------------
@@ -28,6 +43,8 @@ class Catalog_Controller extends Base_Controller {
    	{
       if(!Auth::user())
             return Redirect::to('login');
+
+      $category = Categories::getCategoryById($idCategory);
    		return $category;
    	}
 
@@ -40,10 +57,11 @@ class Catalog_Controller extends Base_Controller {
             return Redirect::to('login');
 
       $categoryName = Input::get('categoryName'); //echo $categoryName; exit;
-      if(!empty($categoryName)) {
-          $parentId = 0;
-          if(isset($_POST['idParent'])) $parentId = $_POST['idParent']; 
-          catalogCategories::addCategory($categoryName, $parentId);
+      $parentId     = Input::get('idParent');
+
+      if(!empty($categoryName)) { 
+          if(empty($parentId)) $parentId = 0;
+          Categories::addCategory($categoryName, $parentId, self::$unit);
           return true;
       } else return false;   		
    	}

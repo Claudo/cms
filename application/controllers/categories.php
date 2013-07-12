@@ -21,12 +21,16 @@ class Categories_Controller extends Base_Controller {
         if(!Auth::user())
             return Redirect::to('login');
 
-		$nameCategory = $_POST['nameCategory'];
-        if(!empty($nameCategory)) {
-            $parentId = 0;
-            if(isset($_POST['idParent'])) $parentId = $_POST['idParent'];
-            Categories::addCategory($nameCategory, $parentId);
-        }
+		$categoryName = Input::get('categoryName'); //echo $categoryName; exit;
+        $parentId = Input::get('idParent');
+        $unit = Input::get('unit');
+
+        if(!empty($categoryName)) { 
+          if(empty($parentId)) $parentId = 0;
+          if(empty($unit)) $unit = 1;
+          Categories::addCategory($categoryName, $parentId, $unit);
+          return true;
+      } else return false;  
 	}
 
     //--------------------------------------------------------------------------------------------------
@@ -63,7 +67,7 @@ class Categories_Controller extends Base_Controller {
         if(!Auth::user())
             return Redirect::to('login');
 
-        $idCategory = $_POST['idCategory'];
+        $idCategory = Input::get('idCategory');
         if(!empty($idCategory)) {
             $category = Categories::find($idCategory);
             $category = $category->to_array();
@@ -94,12 +98,14 @@ class Categories_Controller extends Base_Controller {
         if(!Auth::user())
             return Redirect::to('login');
 
-        $idCategory   = $_POST['idCategory'];
-        $nameCategory = $_POST['nameCategory'];
+        $idCategory = Input::get('idCategory');
+        $nameCategory = Input::get('nameCategory');
+
+        var_dump($idCategory, $nameCategory);
         if(!empty($idCategory) && !empty($nameCategory)) {
             $category = Categories::find($idCategory);
             $category->name_category = $nameCategory;
-            $category->save();
+            $category->save();       
             return true;
         }
     }

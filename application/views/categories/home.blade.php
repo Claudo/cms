@@ -179,9 +179,9 @@
             return false;
         }
 
-        var nameCategory = $('#inputCategory').val();
+        var categoryName = $('#inputCategory').val();
 
-        $.post("/categories/addCategory/", {nameCategory: nameCategory, idParent: idParent}).done(function(data) {
+        $.post("/categories/addCategory/", {categoryName: categoryName, idParent: idParent}).done(function(data) {
             $('#addCategory').modal('hide');
             refreshTree();
         });
