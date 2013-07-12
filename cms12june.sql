@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.10.1deb1
+-- version 3.4.11.1deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 04, 2013 at 11:25 AM
+-- Generation Time: Jul 12, 2013 at 02:20 PM
 -- Server version: 5.5.31
--- PHP Version: 5.3.10-1ubuntu3.6
+-- PHP Version: 5.4.6-1ubuntu1.2
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -28,16 +28,16 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `albums` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` tinytext COLLATE utf8_bin,
-  `title` tinytext COLLATE utf8_bin,
-  `description` text COLLATE utf8_bin,
-  `header` tinytext COLLATE utf8_bin,
-  `content` text COLLATE utf8_bin,
-  `cover` tinytext COLLATE utf8_bin,
+  `name` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `title` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `description` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `header` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `content` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `cover` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
 
 --
 -- Dumping data for table `albums`
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `articles_tags` (
   `created_at` date NOT NULL,
   `updated_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `articles_tags`
@@ -174,6 +174,99 @@ INSERT INTO `blocks` (`id`, `url`, `block`, `updated_at`, `created_at`) VALUES
 (84, 'hehe', '<p>hoho</p>\n', '2013-06-11', '2013-06-11'),
 (85, 'oe', '<p>oeoe</p>\n', '2013-06-11', '2013-06-11'),
 (86, 'qu', '<p>rere</p>\n', '2013-06-11', '2013-06-11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `catalog_categories`
+--
+
+CREATE TABLE IF NOT EXISTS `catalog_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `parent_id` int(11) DEFAULT NULL,
+  `name_category` tinytext,
+  `title` text NOT NULL,
+  `header` text NOT NULL,
+  `description` text NOT NULL,
+  `updated_at` date DEFAULT NULL,
+  `created_at` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `catalog_categories`
+--
+
+INSERT INTO `catalog_categories` (`id`, `parent_id`, `name_category`, `title`, `header`, `description`, `updated_at`, `created_at`) VALUES
+(1, NULL, 'test', '', '', '', '2013-07-11', '2013-07-11'),
+(2, NULL, 'test', '', '', '', '2013-07-11', '2013-07-11'),
+(3, NULL, 'вапвап', '', '', '', '2013-07-11', '2013-07-11'),
+(4, NULL, 'укецуе', '', '', '', '2013-07-11', '2013-07-11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `catalog_images`
+--
+
+CREATE TABLE IF NOT EXISTS `catalog_images` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_product` int(11) DEFAULT NULL,
+  `image` tinytext,
+  `preview` tinytext,
+  `created_at` date DEFAULT NULL,
+  `updated_at` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `catalog_options`
+--
+
+CREATE TABLE IF NOT EXISTS `catalog_options` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `option_name` tinytext,
+  `created_at` date NOT NULL,
+  `updateed_at` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `catalog_options_values`
+--
+
+CREATE TABLE IF NOT EXISTS `catalog_options_values` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_product` int(11) DEFAULT NULL,
+  `id_option` int(11) DEFAULT NULL,
+  `value` text,
+  `created_at` date DEFAULT NULL,
+  `updated_at` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `catalog_products`
+--
+
+CREATE TABLE IF NOT EXISTS `catalog_products` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` tinytext,
+  `title` tinytext,
+  `description` text,
+  `content` text,
+  `price` int(11) DEFAULT NULL,
+  `id_category` int(11) DEFAULT NULL,
+  `created_at` date DEFAULT NULL,
+  `updated_at` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -243,18 +336,18 @@ INSERT INTO `comments` (`id`, `articles_id`, `name`, `email`, `text`, `check`, `
 
 CREATE TABLE IF NOT EXISTS `images` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` tinytext COLLATE utf8_bin,
-  `title` tinytext COLLATE utf8_bin,
-  `description` text COLLATE utf8_bin,
-  `header` tinytext COLLATE utf8_bin,
-  `image` tinytext COLLATE utf8_bin,
-  `preview` tinytext COLLATE utf8_bin,
-  `content` text COLLATE utf8_bin,
+  `name` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `title` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `description` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `header` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `image` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `preview` tinytext CHARACTER SET utf8 COLLATE utf8_bin,
+  `content` text CHARACTER SET utf8 COLLATE utf8_bin,
   `id_album` int(11) DEFAULT NULL,
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
 
 --
 -- Dumping data for table `images`
@@ -306,12 +399,12 @@ INSERT INTO `tags` (`id`, `title`, `updated_at`, `created_at`) VALUES
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL,
-  `email` tinytext CHARACTER SET utf8 NOT NULL,
+  `email` tinytext NOT NULL,
   `password` tinytext NOT NULL,
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
