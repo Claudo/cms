@@ -15,7 +15,7 @@
         <a class="brand" href="/">Вебпортфолио</a>
         <ul class="nav">
           @if($navActive == 'articles')   <li class="active"> @else <li> @endif <a href="/articles">Статьи</a></li>
-          @if($navActive == 'categories') <li class="active"> @else <li> @endif <a href="/categories">Категории</a></li>          
+          @if($navActive == 'categories') <li class="active"> @else <li> @endif <a href="/categories">Категории статей</a></li>          
           @if($navActive == 'gallery')    <li class="active"> @else <li> @endif <a href="/gallery">Галерея</a></li>
           @if($navActive == 'catalog')    <li class="active"> @else <li> @endif<a href="/catalog">Каталог товаров</a></li>
           @if($navActive == 'blocks')     <li class="active"> @else <li> @endif<a href="/blocks">Статичные HTML блоки</a></li>

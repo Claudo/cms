@@ -1,0 +1,10 @@
+#sidebarBlock {
+	background-color: #4b4c4d;
+	color: #fff;
+	padding: 5px;
+	min-height: 100%;
+}
+
+.tree li {
+    list-style-type: none;
+}
