@@ -1,5 +1,7 @@
 <?php
 class Gallery_Controller extends Base_Controller {
+
+    static $unit=3; //индекс модуля "gallery" (db: units)
     
     public  function action_index() {
         if(!Auth::user())
@@ -44,14 +46,16 @@ class Gallery_Controller extends Base_Controller {
     //----------------------------------------------------------------------------------------------------------------------
     // Добавление нового изображения
     //----------------------------------------------------------------------------------------------------------------------
-    public function action_insertImage() {
+    public function action_insertImage($unit = 3) {
         if(!Auth::user())
             return Redirect::to('login');
         $images = new Images;
 
-        //получаем информацию о файле, даём уникальное имя
+        // получаем информацию о файле, даём уникальное имя
         // и отправляем его в папку gallery
+        
         $file = Input::file('inputFile');
+
         $fileName = time() . rand(0,1000) . '_' . $file['name'];
         Input::upload('inputFile', path('public').'img/gallery', $fileName);
         //создаём уменьшенную копию изображения для превью
@@ -69,13 +73,14 @@ class Gallery_Controller extends Base_Controller {
       
         $images->save();
 
-    	$albums = Albums::getAlbums();
-        $breadcrumbsArr[] = array ('name' => 'галерея', 'url' => '');
-        $breadcrumbs = Controller::call('breadcrumbs@createBreadcrumbs', array($breadcrumbsArr));
-        
-        
-        return Redirect::to('gallery/'.Input::get('inputAlbumId'));
-        
+        // Если вызов был из модуля "gallery" редиректим на страницу альбома
+        // в который добавлялось изображение.
+        // В противном случае вернуть id изображения
+        if ($unit == 3) {
+            return Redirect::to('gallery/'.Input::get('inputAlbumId'));
+        } else {
+            return Images::geLastElementId();
+        }
     }
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -235,11 +240,13 @@ class Gallery_Controller extends Base_Controller {
     //----------------------------------------------------------------------------------------------------------------------
     // Удаление изображения
     //----------------------------------------------------------------------------------------------------------------------
-    public function action_delImage() {
+    public function action_delImage($idImage='') {
         if(!Auth::user())
             return Redirect::to('login');
+        
+        if ($idImage=='')
+            $idImage = Input::get('idImage');
 
-        $idImage = Input::get('idImage');
         if(empty($idImage)) return false;
 
         $image = Images::find($idImage);
@@ -266,7 +273,4 @@ class Gallery_Controller extends Base_Controller {
         return true;
     }
 
-    //--------------------------------------------------------------------------------------------------
-    // Создание превью 100*100
-    //--------------------------------------------------------------------------------------------------
 }

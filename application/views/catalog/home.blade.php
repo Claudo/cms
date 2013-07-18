@@ -6,16 +6,16 @@
 
 <!-- Добавление новой категории -->
 <div class="pull-right">
-<a href="#addCategory" class="btn btn-success" onclick="showAddCategoryForm(); return false;">
+<a href="#" class="btn btn-success" onclick="showAddCategoryForm(); return false;">
 	<i class="icon icon-white icon-plus"></i> Добавить категорию
 </a>
-<a href="#addCategory" class="btn btn-success" onclick="showAddProductForm(); return false;">
+<a href="#" class="btn btn-success" onclick="showAddProductForm(); return false;">
 	<i class="icon icon-white icon-plus"></i> Добавить продукт
 </a>
 </div>
 
 <div style="clear: both;"></div>
-
+<hr>
 <!-- Модальное окно для добавления новой категории -->
 <div id="addCategory" class="modal hide fade span4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:500px">
   <div class="modal-header">
@@ -50,39 +50,47 @@
   </div>
   <div class="modal-body">
   	<div class="row-fluid">
-		<form class="form-horizontal" onSubmit="addProduct(); return false;" id="addProductForm">
+		<form class="form-horizontal" action="/catalog/addProduct" method="post" id="addProductForm" enctype="multipart/form-data">
 			<div class="span5">
 			  <div class="control-group">
 			    <label class="control-label" for="name">Название продукта:</label>
 			    <div class="controls">
-			      <input type="text" id="name" placeholder="Название продукта" class="span12">
+			      <input type="text" id="name" name="productName" placeholder="Название продукта" class="span12">
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="title">title:</label>
 			    <div class="controls">
-			      <input type="text" id="title" placeholder="title" class="span12">
+			      <input type="text" id="title" name="productTitle" placeholder="title" class="span12">
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="title">description:</label>
 			    <div class="controls">
-			      <textarea id="description" placeholder="description" class="span12"></textarea>
+			      <textarea id="description" name="productDescription" placeholder="description" class="span12"></textarea>
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="content">Описание:</label>
 			    <div class="controls">
-			      <input type="text" id="content" placeholder="content" class="span12">
+			      <input type="text" id="content" name="productContent" placeholder="content" class="span12">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="content">Цена:</label>
+			    <div class="controls">
+			      <input type="text" id="price" name="productPrice" placeholder="price" class="span12">
 			    </div>
 			  </div>
 			</div>
 			<div class="span1"></div>
 			<div class="span6">
+				<div style="float:left; min-height:110px; border: 2px" id="productImagePrew"></div>
+				<div style="clear:both"></div><hr>
 				<div class="control-group">
 				    <label class="control-label" for="image">Добавить изображение:</label>
 				    <div class="controls">
-				      <input type="file" id="image" placeholder="Добавить изображение" class="span12">
+				      <input type="file" id="image" name="inputFile" placeholder="Добавить изображение" class="span12">
 				    </div>
 			    </div>
 			</div>
@@ -92,37 +100,53 @@
 				Добавить характеристики продукта
 			</a>
 			<div id="productOptionsBlock"></div>
+			<input type="hidden" id="allOptions" name="allOptions">
+			<input type="hidden" id="idProductCategory" name="idProductCategory" value="false">
+			<input type="hidden" id="idProductForm" name="idProductForm">
 		</form>
 	</div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-danger pull-left" style="display: none;" id="buttonDeleteCategory"><i class="icon icon-trash icon-white"></i> Удалить категорию</button>
+    <!-- (Пожалуй лишняя) button class="btn btn-danger pull-left" style="display: none;" id="buttonDeleteProduct()"><i class="icon icon-trash icon-white"></i> Удалить категорию</button -->
     <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
-    <button class="btn btn-primary" onClick="addCategory(); return false;" id="buttonSaveCategory">Сохранить</button>
+    <button class="btn btn-primary" onClick="addProduct(); return false;" id="buttonSaveProduct">Сохранить</button>
   </div>
 </div>
 
-<div class="container-fluid">
+<div>
+<!-- div style="float:left" -->
   <div class="row-fluid">
-    <div class="span4" id="sidebarBlock">
+    <div class="span3" id="sidebarBlock">
       <!--Sidebar content-->
       <div id="listCategories">
         @render('catalog.tree', array('categories' => $categories))
   	  </div>
     </div>
-    <div class="span10">
+    <div class="span9" style="float:right">
+      <h2 id="catalogName">Выбирите каталог</h2>
+      <div id="products">
+      <!-- крошки ?!? -->
       <!--Body content-->
       <!-- список товаров / конкретный товар -->
+	  </div>
     </div>
   </div>
 </div>
 
 <script type="text/javascript">
+	var optionNum = 0;
+	// Категории ---------------------------------------------------------------------------------------
 	//--------------------------------------------------------------------------------------------------
 	// Выводит поле для ввода дополнительной характеристики продукта
 	//--------------------------------------------------------------------------------------------------
 	function newOptionForm() {
-		$('#productOptionsBlock').append('<div class="optionProduct" style="margin: 5px;"><input type="text" id="option" placeholder="Название опции" class="span4">&nbsp;<input type="text" id="option" placeholder="Значение" class="span7">&nbsp;<a href="" onClick="" class="btn btn-success"><i class="icon icon-white icon-ok"></i></a></div>');
+		$('#productOptionsBlock').append('<div class="optionProduct" style="margin: 5px;">'+
+										 '<input type="text" id="optionName'+optionNum+'" name="option['+optionNum+'][name]" placeholder="Название опции" class="span4">'+
+										 '&nbsp;<input type="text" id="optionValue'+optionNum+'" name="option['+optionNum+'][value]" placeholder="Значение" class="span7">'+
+										 '&nbsp;<a href="" onClick="" class="btn btn-success">'+
+										 '<input type="hidden" id="optionId'+optionNum+'" name="option['+optionNum+'][id]" value="false">'+
+										 '<i class="icon icon-white icon-ok"></i></a></div>');
+		optionNum++;
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -187,8 +211,8 @@
             $('#idCategory').val(category.id);
 
             // Изменяем кнопки
-            $('#buttonDeleteCategory').removeAttr('style');
-            $('#buttonDeleteCategory').removeAttr('onClick').attr('onClick', 'deleteCategory(' + idCategory + ');')
+            //$('#buttonDeleteCategory').removeAttr('style');
+            //$('#buttonDeleteCategory').removeAttr('onClick').attr('onClick', 'deleteCategory(' + idCategory + ');')
             $('#buttonSaveCategory').removeAttr('onClick').attr('onClick', 'updateCategory(' + idCategory + ');');
             $('#addCategoryForm').removeAttr('onSubmit').attr('onSubmit', 'updateCategory(' + idCategory + ');');
 
@@ -257,20 +281,112 @@
         });
     }
 
+    //----------------------------------------------------------------------------------------------------------------------
+    // Показать продукты в категории
+    //----------------------------------------------------------------------------------------------------------------------
+    function showCategoryContent(idCategory, nameCategory){
+    	$('#idProductCategory').val(idCategory);
+    	$('#catalogName').html(nameCategory);
+    	$('#products').html('');
 
+    	$.post("/catalog/getAllProduct", { idCategory: idCategory}).done(function(data){
+    		$('#products').html(data);
+    	});
+    		
+    	return false;
+    }
+
+    //--------------------------------------------------------------------------------------------------
+	// Сброс формы добавления категории
+	//--------------------------------------------------------------------------------------------------
+	function clearCategoryForm() {
+		$('#inputCategory').val('');
+		$('#idParent').val('');
+		$('#idCategory').val('');
+		$('#buttonDeleteCategory').attr('style', 'display:none;');
+        $('#buttonSaveCategory').removeAttr('onClick').attr('onClick', 'addCategory();');
+        $('#addCategoryForm').removeAttr('onSubmit').attr('onSubmit', 'addCategory();');
+	}
+
+	//----------------------------------------------------------------------------------------------------------------------
+    // Смена страниц
+    //----------------------------------------------------------------------------------------------------------------------
+    function changePage(pageNo) {
+        if(pageNo == '') return false;
+        var idCategory = $('#idProductCategory').val();
+        $.post("/catalog/getAllProduct", { pageNo: pageNo, idCategory: idCategory }).done(function(data){
+    		$('#products').html(data);
+    	});
+    }
+
+    // Продукты ----------------------------------------------------------------------------------------
 	//--------------------------------------------------------------------------------------------------
 	// Показыает окно добавления продукта
 	//--------------------------------------------------------------------------------------------------
 	function showAddProductForm() {
-		cleatProductForm();
-		$('#addProduct').modal('show');
+		if ($('#idProductCategory').val() == 'false'){
+			window.alert('Не выбран каталог, пожалуйста укажите каталог в меню слева');
+		} else {
+			cleatProductForm();
+			$('#addProduct').modal('show');
+		}
 	}
 
 	//--------------------------------------------------------------------------------------------------
 	// Показывает окно для редактирования продукта
 	//--------------------------------------------------------------------------------------------------
-	function showEditProductForm() {
+	function showEditProductForm(idProduct) {
+		cleatProductForm();
+		$.post("/catalog/getProduct", { idProduct: idProduct }).done(function(data){
+				data = $.parseJSON(data);
+	    		console.debug(data);
+				$('#name').val(data.name);
+				$('#title').val(data.title);
+				$('#description').val(data.description);
+				$('#content').val(data.content);
+				$('#price').val(data.price);
+				$('#addProduct').modal('show');
+				$('#idProductForm').val(idProduct);
 
+				if(data.previewPath != 'default') {
+					$('#productImagePrew').html(
+					'<img src="'+ data.previewPath +'">'+
+					'<button onclick="deleteImage('+data.previewId+', '+idProduct+')" type="button" class="close" >×</button>'
+					);
+				} else {
+					$('#productImagePrew').html('Картинка отсутствует');
+				}
+
+
+				var i=0;
+				while(data.options[i]) {
+
+					var option = data.options[i];
+					
+
+					$('#productOptionsBlock').append(
+						'<div class="optionProduct" style="margin: 5px;">'+
+						'<input type="text" id="optionName'+i+'"'+
+						' name="option['+i+'][name]" placeholder="Название опции" class="span4">'+
+						'&nbsp;<input type="text" id="optionValue'+i+'"'+
+						' name="option['+i+'][value]" placeholder="Значение" class="span7">'+
+						'<input type="hidden" id="optionId'+i+'" name="option['+i+'][id]">'+
+						'&nbsp;<a href="#" onClick="deleteOption('+option.id+', '+i+')" id="delOption'+i+'" class="btn btn-danger">'+
+						'<i class="icon icon-remove"></i></a></div>');
+
+					$('#optionName'+i).val(option.name);
+					$('#optionValue'+i).val(option.value);
+					$('#optionId'+i).val(option.id);
+					i++;
+					optionNum++;
+				}
+
+	            // Изменяем кнопки
+	       
+	            $('#addProductForm').attr('action', '/catalog/updateProductOption');
+	            //$('#buttonSaveProduct').removeAttr('onClick').attr('onClick', 'editProduct(' + idProduct + ');');
+	            $('#buttonSaveProduct').html('Изменить');
+	    	});
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -281,10 +397,21 @@
 	}
 
 	//--------------------------------------------------------------------------------------------------
-	// Добавление нового продукта
+	// Добавление нового продукта // будут проблемы с загрузкой картинок...
 	//--------------------------------------------------------------------------------------------------
 	function addProduct() {
+		$('#addProductForm').submit();
+	}
 
+	//----------------------------------------------------------------------------------------------------------------------
+	// Удаление продукта
+	//----------------------------------------------------------------------------------------------------------------------
+	function deleteProduct(idProduct) {
+		if(window.confirm('Вы действительно хотите удалить продукт?')) {
+			$.post("/catalog/deleteProduct", { idProduct: idProduct }).done(function(data){
+	    		$('#products').html(data);
+	    	});
+		}
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -311,8 +438,12 @@
 	//--------------------------------------------------------------------------------------------------
 	// Удалить изображение продукта
 	//--------------------------------------------------------------------------------------------------
-	function deleteImage() {
-
+	function deleteImage(idImage, idProduct) {
+		if(window.confirm('Вы действительно хотите удалить изображение продукта?')) {
+			$.post("/catalog/deleteImage", { idImage: idImage, idProduct: idProduct }).done(function(data){
+	    		$('#productImagePrew').html('');
+	    	});
+		}
 	}
 
 	//--------------------------------------------------------------------------------------------------
@@ -330,39 +461,37 @@
 	}
 
 	//--------------------------------------------------------------------------------------------------
-	// Удалить значение опции продукта
-	//--------------------------------------------------------------------------------------------------
-	function deleteOptionValue(idProduct, idOption) {
-
-	}
-
-	//--------------------------------------------------------------------------------------------------
 	// Удалить опцию продукта
 	//--------------------------------------------------------------------------------------------------
-	function deleteOption(idProduct, idOption) {
+	function deleteOption(idOption, idField) {
+		if(window.confirm('Вы действительно хотите удалить параметр данного продукта?')) {
+			$.post("/catalog/removeProductOption", { idOption: idOption }).done(function(data){
+	    		$('#optionName'+idField).remove();
+				$('#optionValue'+idField).remove();
+				$('#delOption'+idField).remove();
+				$('#optionId'+idField).remove();
+				$('#addProduct').modal('show');
+	    	});
+	    	return false;
+		}
 
-	}
-
-	//--------------------------------------------------------------------------------------------------
-	// Сброс формы добавления категории
-	//--------------------------------------------------------------------------------------------------
-	function clearCategoryForm() {
-		$('#inputCategory').val('');
-		$('#idParent').val('');
-		$('#idCategory').val('');
-		$('#buttonDeleteCategory').attr('style', 'display:none;');
-        $('#buttonSaveCategory').removeAttr('onClick').attr('onClick', 'addCategory();');
-        $('#addCategoryForm').removeAttr('onSubmit').attr('onSubmit', 'addCategory();');
 	}
 
 	//--------------------------------------------------------------------------------------------------
 	// Сброс формы добавления товара
 	//--------------------------------------------------------------------------------------------------
 	function cleatProductForm() {
+		$('#image').val('');
 		$('#name').val('');
 		$('#title').val('');
 		$('#description').val('');
 		$('#content').val('');
+		$('#productImagePrew').html('');
+		$('#productOptionsBlock').html('');
+		$('#addProductForm').attr('action', '/catalog/addProduct');
+	    $('#buttonSaveProduct').html('Сохранить');
+
+	    var optionNum = 0;
 	}
 	
 	

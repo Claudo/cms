@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июл 12 2013 г., 19:12
+-- Время создания: Июл 18 2013 г., 14:27
 -- Версия сервера: 5.5.31
 -- Версия PHP: 5.3.10-1ubuntu3.6
 
@@ -37,16 +37,7 @@ CREATE TABLE IF NOT EXISTS `albums` (
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
-
---
--- Дамп данных таблицы `albums`
---
-
-INSERT INTO `albums` (`id`, `name`, `title`, `description`, `header`, `content`, `cover`, `updated_at`, `created_at`) VALUES
-(10, 'alBOOM 2', 'sadsdsadaddasdsdadasdasd', 'asdsdassadasasddassaddsaddsasaddsasa', 'sdadasdasdas', 'asdasdasdasdddasdsdsd', '1370531910104_wp2.jpg', '2013-06-10', '2013-06-06'),
-(14, 'альбом 1', 'титл', '', '', '', '1370590494615_wp3.jpg', '2013-06-07', '2013-06-06'),
-(16, 'dssdfsdfsdfdsf', 'dsfsdfs', 'fsdfdsfsdfds', 'dsfsdfsdfsdfdsfs', '', '1370590821619_wp3.jpg', '2013-06-07', '2013-06-06');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -178,46 +169,28 @@ INSERT INTO `blocks` (`id`, `url`, `block`, `updated_at`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `catalog_categories`
---
-
-CREATE TABLE IF NOT EXISTS `catalog_categories` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `parent_id` int(11) DEFAULT NULL,
-  `name_category` tinytext,
-  `title` text NOT NULL,
-  `header` text NOT NULL,
-  `description` text NOT NULL,
-  `updated_at` date DEFAULT NULL,
-  `created_at` date DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
-
---
--- Дамп данных таблицы `catalog_categories`
---
-
-INSERT INTO `catalog_categories` (`id`, `parent_id`, `name_category`, `title`, `header`, `description`, `updated_at`, `created_at`) VALUES
-(1, NULL, 'test', '', '', '', '2013-07-11', '2013-07-11'),
-(2, NULL, 'test', '', '', '', '2013-07-11', '2013-07-11'),
-(3, NULL, 'вапвап', '', '', '', '2013-07-11', '2013-07-11'),
-(4, NULL, 'укецуе', '', '', '', '2013-07-11', '2013-07-11');
-
--- --------------------------------------------------------
-
---
 -- Структура таблицы `catalog_images`
 --
 
 CREATE TABLE IF NOT EXISTS `catalog_images` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_product` int(11) DEFAULT NULL,
-  `image` tinytext,
-  `preview` tinytext,
-  `created_at` date DEFAULT NULL,
-  `updated_at` date DEFAULT NULL,
+  `id_product` int(20) NOT NULL,
+  `id_image` int(20) NOT NULL,
+  `created_at` date NOT NULL,
+  `updated_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6 ;
+
+--
+-- Дамп данных таблицы `catalog_images`
+--
+
+INSERT INTO `catalog_images` (`id`, `id_product`, `id_image`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2013-07-18', '2013-07-18'),
+(2, 2, 2, '2013-07-18', '2013-07-18'),
+(3, 3, 3, '2013-07-18', '2013-07-18'),
+(4, 4, 4, '2013-07-18', '2013-07-18'),
+(5, 5, 5, '2013-07-18', '2013-07-18');
 
 -- --------------------------------------------------------
 
@@ -229,9 +202,20 @@ CREATE TABLE IF NOT EXISTS `catalog_options` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `option_name` tinytext,
   `created_at` date NOT NULL,
-  `updateed_at` date NOT NULL,
+  `updated_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+
+--
+-- Дамп данных таблицы `catalog_options`
+--
+
+INSERT INTO `catalog_options` (`id`, `option_name`, `created_at`, `updated_at`) VALUES
+(1, 'Opt1', '2013-07-18', '2013-07-18'),
+(2, 'Opt2', '2013-07-18', '2013-07-18'),
+(3, '', '2013-07-18', '2013-07-18'),
+(4, 'Opt12', '2013-07-18', '2013-07-18'),
+(5, 'OpTion_Index', '2013-07-18', '2013-07-18');
 
 -- --------------------------------------------------------
 
@@ -247,7 +231,19 @@ CREATE TABLE IF NOT EXISTS `catalog_options_values` (
   `created_at` date DEFAULT NULL,
   `updated_at` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+
+--
+-- Дамп данных таблицы `catalog_options_values`
+--
+
+INSERT INTO `catalog_options_values` (`id`, `id_product`, `id_option`, `value`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'Val1', '2013-07-18', '2013-07-18'),
+(2, 1, 2, 'Val2', '2013-07-18', '2013-07-18'),
+(3, 2, 1, 'Value2', '2013-07-18', '2013-07-18'),
+(4, 2, 3, '', '2013-07-18', '2013-07-18'),
+(5, 3, 4, '123', '2013-07-18', '2013-07-18'),
+(6, 5, 5, 'OptionValue', '2013-07-18', '2013-07-18');
 
 -- --------------------------------------------------------
 
@@ -266,7 +262,18 @@ CREATE TABLE IF NOT EXISTS `catalog_products` (
   `created_at` date DEFAULT NULL,
   `updated_at` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+
+--
+-- Дамп данных таблицы `catalog_products`
+--
+
+INSERT INTO `catalog_products` (`id`, `name`, `title`, `description`, `content`, `price`, `id_category`, `created_at`, `updated_at`) VALUES
+(1, 'produkt_1', 'tit', 'desc', 'Opisanie TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT ', 1000000, 45, '2013-07-18', '2013-07-18'),
+(2, 'Product2', 'tit', 'desc', 'Opisanie TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT ', 125000000, 45, '2013-07-18', '2013-07-18'),
+(3, 'Product3', 'TitL', 'DesC', 'Opisanie TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT TexT  123', 180000, 45, '2013-07-18', '2013-07-18'),
+(4, 'Product4', 'qqqwww', 'wwwqqq', 'ConTeNT ConTeNT ConTeNT ConTeNT ConTeNT', 0, 45, '2013-07-18', '2013-07-18'),
+(5, 'Product5', 'Tit', 'Desc', 'Cont', 10, 45, '2013-07-18', '2013-07-18');
 
 -- --------------------------------------------------------
 
@@ -282,7 +289,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=44 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=46 ;
 
 --
 -- Дамп данных таблицы `categories`
@@ -298,7 +305,9 @@ INSERT INTO `categories` (`id`, `parent_id`, `name_category`, `for_unit`, `updat
 (34, 23, 'Ля ля ля1', 1, '2013-05-13', '2013-05-13'),
 (35, 23, 'Ля ля ля', 1, '2013-05-13', '2013-05-13'),
 (36, NULL, 'alea jacta est1', 2, '2013-07-12', '2013-05-28'),
-(43, NULL, 'TmpCat', 2, '2013-07-12', '2013-07-12');
+(43, NULL, 'TmpCat', 2, '2013-07-12', '2013-07-12'),
+(44, 36, 'оогнпшгншг', 2, '2013-07-16', '2013-07-16'),
+(45, NULL, 'Каталог Прикольных Товаров', 2, '2013-07-18', '2013-07-18');
 
 -- --------------------------------------------------------
 
@@ -348,20 +357,18 @@ CREATE TABLE IF NOT EXISTS `images` (
   `updated_at` date NOT NULL,
   `created_at` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
 -- Дамп данных таблицы `images`
 --
 
 INSERT INTO `images` (`id`, `name`, `title`, `description`, `header`, `image`, `preview`, `content`, `id_album`, `updated_at`, `created_at`) VALUES
-(18, 'eqeqeqwewq', '', '', '', '1370531435519_wp2.jpg', 'small_1370531435519_wp2.jpg', '', 10, '2013-06-06', '2013-06-06'),
-(19, 'gdgdffgd', '', '', '', '1370531910104_wp2.jpg', 'small_1370531910104_wp2.jpg', '', 10, '2013-06-06', '2013-06-06'),
-(20, 'fdgdgdfgdd', '', '', '', '1370531920653_wp4.jpg', 'small_1370531920653_wp4.jpg', '', 10, '2013-06-06', '2013-06-06'),
-(21, 'adsdasasda', 'adsasdadasda', 'asdasdasdasda', 'adsdasdadasdsadasdd', '1370532305482_bg.jpg', 'small_1370532305482_bg.jpg', 'dasdadasdasdasdad', 10, '2013-06-06', '2013-06-06'),
-(22, 'dffssdsfsdfsdfsdfdsd', 'dsfsdfsdfsdfdsdfs', 'fdsfsdfsdfs', 'sdfsdfsdfsdfsdfsdfdsf', '1370532324491_wp2.jpg', 'small_1370532324491_wp2.jpg', 'sdfsdfdfdsfsdfsdfsdfsfsdfss', 10, '2013-06-06', '2013-06-06'),
-(24, 'sadasdadasdasdasdas', '', '', '', '1370590494615_wp3.jpg', 'small_1370590494615_wp3.jpg', '', 14, '2013-06-07', '2013-06-07'),
-(25, 'ffdsdfsdfsfsfsdf', 'fsd', 'ddsfsdfdsfsfdsds', 'fsdfsdsfsd', '1370590821619_wp3.jpg', 'small_1370590821619_wp3.jpg', '', 16, '2013-06-07', '2013-06-07');
+(1, NULL, NULL, NULL, NULL, '137414291653_ava.png', 'small_137414291653_ava.png', NULL, NULL, '2013-07-18', '2013-07-18'),
+(2, NULL, NULL, NULL, NULL, '1374142985579_wp4.jpg', 'small_1374142985579_wp4.jpg', NULL, NULL, '2013-07-18', '2013-07-18'),
+(3, NULL, NULL, NULL, NULL, '1374143103249_wp9.jpg', 'small_1374143103249_wp9.jpg', NULL, NULL, '2013-07-18', '2013-07-18'),
+(4, NULL, NULL, NULL, NULL, '1374143144413_Wallpapers-of-Warhammer-40000-Dark-Millennium-Online.jpg', 'small_1374143144413_Wallpapers-of-Warhammer-40000-Dark-Millennium-Online.jpg', NULL, NULL, '2013-07-18', '2013-07-18'),
+(5, NULL, NULL, NULL, NULL, '1374143204854_Ubuntu_wallpaper.jpg', 'small_1374143204854_Ubuntu_wallpaper.jpg', NULL, NULL, '2013-07-18', '2013-07-18');
 
 -- --------------------------------------------------------
 
@@ -402,7 +409,7 @@ CREATE TABLE IF NOT EXISTS `units` (
   `id` int(12) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=4 ;
 
 --
 -- Дамп данных таблицы `units`
@@ -410,7 +417,8 @@ CREATE TABLE IF NOT EXISTS `units` (
 
 INSERT INTO `units` (`id`, `name`) VALUES
 (1, 'categories'),
-(2, 'catalog');
+(2, 'catalog'),
+(3, 'gallery');
 
 -- --------------------------------------------------------
 

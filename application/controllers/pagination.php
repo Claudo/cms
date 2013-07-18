@@ -1,24 +1,16 @@
 <?php
+// привести в нормальный вид, потестить, внедрить.
+class Pagination_Controller extends Base_Controller {
 
-class Base_Controller extends Controller {
+/*
+    protected $table_name;
 
-	public static $onPage=4;
 
-	/**
-	 * Catch-all method for requests that can't be matched.
-	 *
-	 * @param  string    $method
-	 * @param  array     $parameters
-	 * @return Response
-	 */
-	public function __call($method, $parameters)
-	{
-		return Response::error('404');
-	}
-
-	//-----------------------------------
-	// Пагинация --------------------------
-	//---------------------------------------
+    function set_table_name($table_name) {
+        $this->table_name = $table_name;
+        return true;
+    }
+*/
 	//----------------------------------------------------------------------------------------------------------------------
     // Количество страниц в категории (by Igor)
     //----------------------------------------------------------------------------------------------------------------------
@@ -37,8 +29,8 @@ class Base_Controller extends Controller {
     //----------------------------------------------------------------------------------------------------------------------
     // Смещение статей для данной страницы (by Igor)
     //----------------------------------------------------------------------------------------------------------------------
-    public static function getOffset($model, $SelectorName, $SelectorValue, $pageNo=1) {
-        $pages = self::getPagesCount($model, $SelectorName, $SelectorValue);
+    public static function getOffset($SelectorValue, $pageNo=1) {
+        $pages = self::getPagesCount($SelectorValue);
         
         if ($pages == 0) $pages=1; //временный фикс, нужен нормальный вывод ошибки на пустую категорию.
 
@@ -52,7 +44,7 @@ class Base_Controller extends Controller {
     //----------------------------------------------------------------------------------------------------------------------
     //  Получить элементы для заданной страницы в виде массива (by Igor)
     //----------------------------------------------------------------------------------------------------------------------
-    public static function getElementsOnPage($model, $SelectorName, $SelectorValue, $offset) {
+    public static function getArticlesPage($model, $SelectorValue, $offset) {
 
         $articles_array = array();
         if($SelectorValue) {
@@ -70,3 +62,4 @@ class Base_Controller extends Controller {
 
 }
 
+?>
