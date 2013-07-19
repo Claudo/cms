@@ -2,7 +2,7 @@
 
 class Base_Controller extends Controller {
 
-	public static $onPage=4;
+	public static $onPage=10;
 
 	/**
 	 * Catch-all method for requests that can't be matched.
@@ -17,9 +17,9 @@ class Base_Controller extends Controller {
 	}
 
 	//-----------------------------------
-	// Пагинация --------------------------
-	//---------------------------------------
-	//----------------------------------------------------------------------------------------------------------------------
+  	// Пагинация --------------------------
+  	//---------------------------------------
+  	//----------------------------------------------------------------------------------------------------------------------
     // Количество страниц в категории (by Igor)
     //----------------------------------------------------------------------------------------------------------------------
     public static function getPagesCount($model, $SelectorName, $SelectorValue) {
@@ -28,6 +28,14 @@ class Base_Controller extends Controller {
         } else {
             $total=$model::count();
         }
+        /* Test Vars 
+        $pages['model'] = $model;
+        $pages['SName'] = $SelectorName;
+        $pages['SValue'] = $SelectorValue;
+        $pages['total'] = $total;
+        $pages['staticVar'] = self::$onPage;
+        $pages['result'] = ceil($total/self::$onPage);
+         ---------- */
 
         $pages=ceil($total/self::$onPage);
 
@@ -68,5 +76,6 @@ class Base_Controller extends Controller {
         return $articles_array;
     }
 
-}
 
+
+}

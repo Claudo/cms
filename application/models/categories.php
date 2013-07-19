@@ -46,6 +46,15 @@ class Categories extends Eloquent {
         return $categories_array;
     }
 
+    public static function getChildCategories($parentCategoryId){
+        $elements=array();
+        $childCategories = Categories::where('parent_id', '=', $parentCategoryId)->get();
+        foreach ($childCategories as $category) {
+            $elements[] = $category->to_array();
+        }
+        return $elements;
+    }
+
    
 
 

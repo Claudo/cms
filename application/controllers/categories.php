@@ -34,16 +34,36 @@ class Categories_Controller extends Base_Controller {
 	}
 
     //--------------------------------------------------------------------------------------------------
-    // Удаление категории
+    // Удаление категории (рекурсивный обход)
+    // на будущее: нужно возвращать список удаленных категорий, что бы удалять их содержимое -----------
     //--------------------------------------------------------------------------------------------------
-    public function action_deleteCategory() {
+    public function action_deleteCategory($idCategory='') {
         if(!Auth::user())
             return Redirect::to('login');
+        
+        $i=0;
+        if ($idCategory == '')
+            $idCategory = Input::get('idCategory');
 
-        $idCategory = $_POST['idCategory'];
-        if(!empty($idCategory)) {
-            $category = Categories::find($idCategory)->delete();
-            return true;
+        while ($idCategory) {
+           
+            if(!empty($idCategory)) {
+
+                if(is_array($idCategory)){
+                    if(empty($idCategory[$i]['id'])) return true;
+                    $idThisCategory = $idCategory[$i]['id'];
+                    $i++;
+                }else $idThisCategory = $idCategory;
+
+                
+                $category = Categories::find($idThisCategory);
+                if(empty($category)) return true;
+                $category->delete();
+
+                $subCategoryId = Categories::getChildCategories($idThisCategory);
+                if (!empty($subCategoryId)) 
+                $this->action_deleteCategory($subCategoryId);
+            } 
         }
     }
 

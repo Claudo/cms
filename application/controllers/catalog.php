@@ -1,12 +1,31 @@
 <?php
+/* 
++ выводим по 10 товаров на страницу
+- длинные названия категорий должны переносится word wrap (Проверить везде длинные названия с пробелами и без)
++ Удаление категорий/подкатегорий (при удалении категории, должны удалятся все подкатегории)
+- Добавление товаров не работает
++ После редактирования, нужно попадать в категорию где лежал товар
++ При попытке добавить товар без категории, должно выдаваться предупреждение. А лучше сдлеать, что бы при заходе в каталог, сразу же открывалась первая категория
++ Иконки в sidebar c категориями сделать белым цветом
++ Поле с ценой не очищается */
 class Catalog_Controller extends Base_Controller {
 
     static $unit = 2; //индекс модуля "catalog" (db: units)
 
-    public  function action_index() {
-        $categories = $this->getCategories(); 
+    // странный факт: методы контролера Base в action_index() работать отказываются...
+    public  function action_index($idCategory='') {
+        $categories = $this->getCategories();
+
+        if($idCategory == '') $idCategory = $categories[0]['id'];
+
+        $firstCat = $this->action_getAllProduct($idCategory);
+        //echo '<pre>';
+        //var_dump($firstCat); die();
+        
+
         $view = View::make('catalog.home')->with('navActive', 'catalog')
-                                          ->with('categories', $categories);
+                                          ->with('categories', $categories)
+                                          ->with('firstCat', $firstCat);
 
         return $view;
     }
@@ -122,14 +141,15 @@ class Catalog_Controller extends Base_Controller {
       // Не уверен, будет ли это вообще работать....
       
       $imgParams[]=self::$unit;
-      
-      $newImageId = Controller::call('gallery@insertImage', $imgParams);
-      $newImage = new catalogImages;
+      $file = Input::get('inputFile');
+      if(!empty($file)) {
+        $newImageId = Controller::call('gallery@insertImage', $imgParams);
+        $newImage = new catalogImages;
 
-      $newImage->id_product = $newProductId;
-      $newImage->id_image   = $newImageId;
-      $newImage->save();
-
+        $newImage->id_product = $newProductId;
+        $newImage->id_image   = $newImageId;
+        $newImage->save();
+      }
       // Перебираем параметры продукта. Если параметр отсутствует
       // добавляем соответствующую запись в catalog_options.
       // Если параметр существует получаем его id.
@@ -179,29 +199,36 @@ class Catalog_Controller extends Base_Controller {
       
   
       //$products = catalogProducts::where('id_category', '=', $idCategory)->get();
-   
-      foreach ($products as $product) {
+      if(!empty($products)){
+        foreach ($products as $product) {
+         
+          $productView[] = $product;
+          $imageId = catalogImages::where('id_product', '=', $product['id'])->get();
+          
+          if (!empty($imageId)){
+            $image = Images::getImageById($imageId[0]->id_image);
+            $productView[$i]['imagePath'] = '/img/gallery/small/'.$image[0]['preview'];
+            $i++;
+          } else {
+            $productView[$i]['imagePath'] = '/img/gallery/small/default.jpg';
+          }
 
-       
-        $productView[] = $product;
-        $imageId = catalogImages::where('id_product', '=', $product['id'])->get();
-        
-        if (!empty($imageId)){
-          $image = Images::getImageById($imageId[0]->id_image);
-          $productView[$i]['imagePath'] = '/img/gallery/small/'.$image[0]['preview'];
-          $i++;
+        }
+        //$page=1;
+        //var_dump($productView); die();
+        if(Request::ajax()){
+        $view = View::make('catalog.list_products')->with('products', $productView)
+                                                    ->with('pages', $pages)
+                                                    ->with('page', $page);
         } else {
-          $productView[$i]['imagePath'] = '/img/gallery/small/default.jpg';
+          $view['products'] = $productView;
+          $view['pages'] = $pages;
+          $view['page'] = $page;
         }
 
+        return $view;
       }
-      //$page=1;
-      //var_dump($productView); die();
-      $view = View::make('catalog.list_products')->with('products', $productView)
-                                                  ->with('pages', $pages)
-                                                  ->with('page', $page);
-      return $view;
-      
+      return false;
     }
 
 
@@ -289,7 +316,7 @@ class Catalog_Controller extends Base_Controller {
     //----------------------------------------------------------------------------------------------------------------------
     // Изменить товар 
     //----------------------------------------------------------------------------------------------------------------------
-    public function action_updateProductOption() {
+    public function updateProductOption() {
       // меняем параметры продукта
       $idProduct = Input::get('idProductForm');
       $newProduct = catalogProducts::find($idProduct);
@@ -338,31 +365,22 @@ class Catalog_Controller extends Base_Controller {
         $optionValue->save();
       }
 
-      return Redirect::to('/catalog/');
+      //return Redirect::to('/catalog/'.Input::get('idProductCategory'));
+      return Input::get('idProductCategory');
 
 
     }
 
-   	//--------------------------------------------------------------------------------------------------
-   	// Получить список опций товара
-   	//--------------------------------------------------------------------------------------------------
-   	public function getProductOptions($idProduct)
-    {
-      if(!Auth::user())
-            return Redirect::to('login');
-      $allOptions=array();
-      $i=0;
-      $optionValues = catalogOptionsValues::where('id_product', '=', $idProduct)->get();
-      
-      foreach ($optionValues as $value) {
-        $optionName = catalogOptions::find($value->id_option);
-        $allOptions[$i]['name'] = $optionName->option_name;
-        $allOptions[$i]['value'] = $value->value;
-        $allOptions[$i]['id'] = $value->id;
-        $i++;
-      }
-      return $allOptions;
-   	}
+    //----------------------------------------------------------------------------------------------------------------------
+    // Страница конкретного каталога 
+    //----------------------------------------------------------------------------------------------------------------------
+    public function action_updateAndShowCatalog(){
+      $idCategory = $this->updateProductOption();
+      $view = $this->action_index($idCategory);
+      return $view;
+    }
+
+   
 
    	//--------------------------------------------------------------------------------------------------
    	// Добавить опцию товара
@@ -491,6 +509,27 @@ class Catalog_Controller extends Base_Controller {
           //var_dump($optionDel); die();
           $optionDel->delete();
         }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // Получить список опций товара
+    //--------------------------------------------------------------------------------------------------
+    public function getProductOptions($idProduct)
+    {
+      if(!Auth::user())
+            return Redirect::to('login');
+      $allOptions=array();
+      $i=0;
+      $optionValues = catalogOptionsValues::where('id_product', '=', $idProduct)->get();
+      
+      foreach ($optionValues as $value) {
+        $optionName = catalogOptions::find($value->id_option);
+        $allOptions[$i]['name'] = $optionName->option_name;
+        $allOptions[$i]['value'] = $value->value;
+        $allOptions[$i]['id'] = $value->id;
+        $i++;
+      }
+      return $allOptions;
     }
 
    	

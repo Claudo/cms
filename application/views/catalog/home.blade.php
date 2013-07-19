@@ -101,7 +101,7 @@
 			</a>
 			<div id="productOptionsBlock"></div>
 			<input type="hidden" id="allOptions" name="allOptions">
-			<input type="hidden" id="idProductCategory" name="idProductCategory" value="false">
+			<input type="hidden" id="idProductCategory" name="idProductCategory" value="{{ $categories[0]['id'] }}">
 			<input type="hidden" id="idProductForm" name="idProductForm">
 		</form>
 	</div>
@@ -123,8 +123,15 @@
   	  </div>
     </div>
     <div class="span9" style="float:right">
-      <h2 id="catalogName">Выбирите каталог</h2>
+      <h2 id="catalogName">{{ $categories[0]['name_category']; }}</h2>
       <div id="products">
+      @if($firstCat)
+      	@render('catalog.list_products', array('products' => $firstCat['products'], 'pages' => $firstCat['pages'], 'page' => $firstCat['page']))
+      @else
+      	<h3>Категория пуста</h3>
+      @endif
+
+      <!-- $catalog; -->
       <!-- крошки ?!? -->
       <!--Body content-->
       <!-- список товаров / конкретный товар -->
@@ -211,8 +218,8 @@
             $('#idCategory').val(category.id);
 
             // Изменяем кнопки
-            //$('#buttonDeleteCategory').removeAttr('style');
-            //$('#buttonDeleteCategory').removeAttr('onClick').attr('onClick', 'deleteCategory(' + idCategory + ');')
+            $('#buttonDeleteCategory').removeAttr('style');
+            $('#buttonDeleteCategory').removeAttr('onClick').attr('onClick', 'deleteCategory(' + idCategory + ');')
             $('#buttonSaveCategory').removeAttr('onClick').attr('onClick', 'updateCategory(' + idCategory + ');');
             $('#addCategoryForm').removeAttr('onSubmit').attr('onSubmit', 'updateCategory(' + idCategory + ');');
 
@@ -290,7 +297,10 @@
     	$('#products').html('');
 
     	$.post("/catalog/getAllProduct", { idCategory: idCategory}).done(function(data){
-    		$('#products').html(data);
+    		if (data)
+    			$('#products').html(data);
+    		else
+    			$('#products').html('<h3>Категория пуста</h3>');
     	});
     		
     	return false;
@@ -383,7 +393,7 @@
 
 	            // Изменяем кнопки
 	       
-	            $('#addProductForm').attr('action', '/catalog/updateProductOption');
+	            $('#addProductForm').attr('action', ''); //'/catalog/updateProductOption');
 	            //$('#buttonSaveProduct').removeAttr('onClick').attr('onClick', 'editProduct(' + idProduct + ');');
 	            $('#buttonSaveProduct').html('Изменить');
 	    	});
@@ -486,6 +496,7 @@
 		$('#title').val('');
 		$('#description').val('');
 		$('#content').val('');
+		$('#price').val('');
 		$('#productImagePrew').html('');
 		$('#productOptionsBlock').html('');
 		$('#addProductForm').attr('action', '/catalog/addProduct');
